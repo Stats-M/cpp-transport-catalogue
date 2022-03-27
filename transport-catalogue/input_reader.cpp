@@ -15,11 +15,6 @@ void ProcessInput(TransportCatalogue& tc, std::istream& is)
 	std::string line;
 	std::getline(is, line);
 
-	/*
-	// Эмуляция ввода
-	std::cout << line << std::endl;
-	*/
-
 	// Первая строка - количество запросов на добавление данных
 	size_t request_num = static_cast<size_t>(std::stoul(line));
 
@@ -32,7 +27,7 @@ void ProcessInput(TransportCatalogue& tc, std::istream& is)
 		// Формат строки: "Bus 750: Tolstopaltsevo - Marushkino - Rasskazovka"
 		// Формат строки: "Stop Universam: 55.587655, 37.645687, 5600m to Rossoshanskaya ulitsa, 900m to Biryulyovo Tovarnaya"
 
-// Отделяем команду от ее параметров
+        // Отделяем команду от ее параметров
 		auto tmp = detail::Split(line, ' ');
 		// Чистим пробелы
 		tmp.first = detail::TrimString(tmp.first);
