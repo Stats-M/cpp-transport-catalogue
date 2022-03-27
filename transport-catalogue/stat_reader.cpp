@@ -20,9 +20,9 @@ void ProcessRequest(TransportCatalogue& tc, std::istream& is)
 	{
 		std::getline(is, line, '\n');
 		// Формат строки: "Bus 256"
+		// Формат строки: "Stop Samara"
 
-
-    // Отделяем команду от ее параметров
+        // Отделяем команду от ее параметров
 		auto tmp = detail::Split(line, ' ');
 		// Чистим пробелы
 		tmp.first = detail::TrimString(tmp.first);
