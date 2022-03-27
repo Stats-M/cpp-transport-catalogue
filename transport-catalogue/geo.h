@@ -5,20 +5,17 @@
 namespace transport_catalogue::geo
 {
 
+// Радиус Земли, метров
+const int EARTH_RADIUS = 6371000;
+
 // Структура, определяющая положение точки в пространстве
 // и методы работы с ней
 struct Coordinates
 {
     double lat;  // Широта
     double lng;  // Долгота
-    bool operator==(const Coordinates& other) const
-    {
-        return lat == other.lat && lng == other.lng;
-    }
-    bool operator!=(const Coordinates& other) const
-    {
-        return !(*this == other);
-    }
+    bool operator==(const Coordinates&) const;
+    bool operator!=(const Coordinates&) const;
 };
 
 inline double ComputeDistance(Coordinates from, Coordinates to)
@@ -31,7 +28,7 @@ inline double ComputeDistance(Coordinates from, Coordinates to)
     static const double dr = 3.1415926535 / 180.;
     return acos(sin(from.lat * dr) * sin(to.lat * dr)
                 + cos(from.lat * dr) * cos(to.lat * dr) * cos(abs(from.lng - to.lng) * dr))
-        * 6371000;
+        * EARTH_RADIUS;
 }
 
 }
