@@ -167,7 +167,25 @@ void TransportCatalogue::AddRoute(Route&& route)
 			ref.meters_route_length = 0U;
 			ref.curvature = 1L;
 		}
+
+		/* СТАРЫЙ РАСЧЕТ ДИСТАНЦИИ (ТОЛЬКО ПО КООРДИНАТАМ)
+		int stops_num = static_cast<int>(ref.stops.size());
+		if (stops_num > 1)
+		{
+			ref.geo_route_length = 0L;
+			for (int i = 0; i < stops_num - 1; ++i)
+			{
+				ref.geo_route_length += ComputeDistance(ref.stops[i]->coords, ref.stops[i + 1]->coords);
+			}
+		}
+		else
+		{
+			// У маршрута 0 или 1 остановка. Длина == 0
+			ref.geo_route_length = 0L;
+		}
+		*/
 	}
+
 }
 
 void TransportCatalogue::AddDistance(const Stop* stop_from, const Stop* stop_to, size_t dist)
