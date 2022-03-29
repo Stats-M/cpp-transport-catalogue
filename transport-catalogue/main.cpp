@@ -5,6 +5,7 @@
 #include "input_reader.h"
 #include "transport_catalogue.h"
 #include "stat_reader.h"
+#include <iostream>         // for cout
 
 #include <sstream>
 
@@ -14,16 +15,16 @@ int main()
 
     transport_catalogue::TransportCatalogue tc;
 
-  
-  
-    
-    transport_catalogue::input_reader::ProcessInput(tc, std::cin);
-    transport_catalogue::stat_reader::ProcessRequest(tc, std::cin);
 
-  
-  
-  
-  /* Раскомментируйте для запуска тестов
+    /*
+    // Закомментируйте эти 2 строки для использования тестового ввода ниже
+    transport_catalogue::input_reader::ProcessInput(tc, std::cin);
+    transport_catalogue::stat_reader::ProcessRequests(std::cout, tc, std::cin);
+    */
+
+
+
+
     // Эмуляция пользовательского ввода
     std::stringstream ss;
     ss << "13\n"s;
@@ -53,10 +54,8 @@ int main()
     ss_req << "Stop Prazhskaya\n"s;
     ss_req << "Stop Biryulyovo Zapadnoye\n"s;
     // Передаем данные запросов на обработку в stat_reader.h/.cpp
-    transport_catalogue::stat_reader::ProcessRequest(tc, ss_req);
-*/
+    transport_catalogue::stat_reader::ProcessRequests(std::cout, tc, ss_req);
 
-   
 
     return 0;
 }
