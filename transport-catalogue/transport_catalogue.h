@@ -18,19 +18,6 @@
 // напишите решение с нуля
 // код сохраните в свой git-репозиторий
 
-// В будущих проектах после снятия ограничений перенести в отдельный файл типа utility.h/.cpp
-namespace detail
-{
-	// Преобразует 1 строку в 2, разделенные count по порядку символом-разделителем
-	std::pair<std::string_view, std::string_view> Split(std::string_view, char, int count = 1);
-	// Удаляет пробелы (переводы строк, табуляцию и т.п.) из начала строки
-	std::string_view Lstrip(std::string_view);
-	// Удаляет пробелы (переводы строк, табуляцию и т.п.) с конца строки
-	std::string_view Rstrip(std::string_view);
-	// Удаляет пробелы (переводы строк, табуляцию и т.п.) со всех сторон строки
-	std::string_view TrimString(std::string_view);
-}
-
 namespace transport_catalogue
 {
 
@@ -64,24 +51,28 @@ enum class RequestQueryType
 // Структура запроса на поиск информации
 struct RequestQuery
 {
-	RequestQueryType type;
-	std::string query;
-	std::string reply;
+	RequestQueryType type{ RequestQueryType::NoOp};
+	std::string_view params;
 };
 
+// Код результата выполнение запроса к базе данных.
+enum class RequestResultType
+{
+	Ok,                  // значение по-умолчанию
+	NoBuses,             // результат: маршруты не найдены
+	StopNotExists,       // результат: остановка не найдена
+	RouteNotExists,      // результат: маршруи не найден
+};
 
 // Структура, хранящая информацию об остановке и определяющая
 // методы работы с ней
 struct Stop
 {
 public:
-	std::string name;          // Название остановки
-	//double latitude;           // Широта
-	//double longitude;          // Долгота
+	std::string name;                   // Название остановки
+	//double latitude;                  // Широта
+	//double longitude;                 // Долгота
 	geo::Coordinates coords{ 0L,0L };   // Координаты
-
-	friend std::ostream& operator<<(std::ostream& out, const Stop& stop);    // friend потому что оператор << должен иметь доступ
-																			 // к внутреннему устройству класса/структуры
 };
 
 // Структура, хранящая информацию о маршруте (автобусе) и определяющая
@@ -94,31 +85,42 @@ struct Route
 	double geo_route_length = 0L;      // Длина маршрута по прямой между координатами (кэшируем, т.к. изменяется только при перестроении маршрута)
 	size_t meters_route_length = 0U;   // Длина маршрута с учетом заданных расстояний между точками (метры) (кэшируем, т.к. изменяется только при перестроении маршрута)
 	double curvature = 0L;             // Извилистость маршрута = meters_route_length / geo_route_length. >1 для любого маршрута, кроме подземного
+};
 
-	friend std::ostream& operator<<(std::ostream& os, const Route* route);    // friend потому что оператор << должен иметь доступ
-																			  // к внутреннему устройству класса/структуры
+// Структура для возврата результата запросов stat_reader
+struct RequestResult
+{
+	RequestResultType code = RequestResultType::Ok;   // Код завершения (если это требуется вызывающему методу)
+	std::vector<std::string> vector_str;              // Вектор строк. Порядок использования элементов определяется вызывающим методом.
+	const Stop* s_ptr = nullptr;               // Указатель на структуру Остановка. Порядок использования определяется вызывающим методом.
+	const Route* r_ptr = nullptr;              // Указатель на структуру Маршрут (автобус). Порядок использования определяется вызывающим методом.
 };
 
 
-// Класс хэшера для unordered_map с ключом типа pair<const T*, const T*>
-template <typename T>
+// Класс хэшера для unordered_map с ключом типа pair<const Stop*, const Stop*>
 class PairPointersHasher
 {
 public:
-	std::size_t operator()(const std::pair<const T*, const T*> pair_of_pointers) const noexcept
+	std::size_t operator()(const std::pair<const Stop*, const Stop*> pair_of_pointers) const noexcept
 	{
+		auto ptr1 = static_cast<const void*>(pair_of_pointers.first);
+		auto ptr2 = static_cast<const void*>(pair_of_pointers.second);
+		return hasher_(ptr1) * 37 + hasher_(ptr2);
+
+		/* Код хэшера для шаблонного варианта PairPointersHasher<T==Stop>
 		// Снимаем константность (нельзя приводить тип для константного указателя)
 		T* ptr1 = const_cast<T*>(pair_of_pointers.first);
 		T* ptr2 = const_cast<T*>(pair_of_pointers.second);
 		// Приведение несовместимых типов
 		std::uintptr_t np_ptr1 = reinterpret_cast<std::uintptr_t>(ptr1);
 		std::uintptr_t np_ptr2 = reinterpret_cast<std::uintptr_t>(ptr2);
-
 		return hasher_(np_ptr1) * 37 + hasher_(np_ptr2);
+		*/
 	}
 
 private:
-	std::hash<std::uintptr_t> hasher_;
+	//std::hash<std::uintptr_t> hasher_;    Хэш-функция для шаблонного варианта PairPointersHasher<T==Stop>
+	std::hash<const void*> hasher_;
 };
 
 
@@ -137,18 +139,15 @@ public:
 	const Stop* GetStopByName(std::string_view);    // Возвращает указатель на структуру остановки по ее имени
 	Route* GetRouteByName(std::string_view);        // Возвращает указатель на структуру маршрута по его имени
 
-	void GetRouteInfo(std::string_view, std::string&);    // Возвращает строку с информацией о маршруте с номером из sv
-	void GetBusesForStop(std::string_view, std::string&); // Возвращает строку с информацией об автобусах для останоки из sv
-
-	void ProcessInputQuery(InputQuery&);       // Парсер входящих запросов, для которых модулем ввода данных
-											   // определен их тип (т.е. заполнено поле InputQuery.InputQueryType)
+	RequestResult GetRouteInfo(std::string_view);         // Возвращает строку с информацией о маршруте с номером из sv
+	RequestResult GetBusesForStop(std::string_view);      // Возвращает строку с информацией об автобусах для останоки из sv
 
 private:
 	std::deque<Stop> all_stops_data_;                                     // Дек с информацией обо всех остановках (реальные данные, не указатели)
 	std::unordered_map<std::string_view, const Stop*> all_stops_map_;     // Словарь остановок (словарь с хэш-функцией)
 	std::deque<Route> all_buses_data_;                                    // Дек с информацией обо всех маршрутах
 	std::unordered_map<std::string_view, Route*> all_buses_map_;          // Словарь маршрутов (автобусов) (словарь с хэш-функцией)
-	std::unordered_map<std::pair<const Stop*, const Stop*>, size_t, PairPointersHasher<Stop>> distances_map_;    // Словарь расстояний между остановками
+	std::unordered_map<std::pair<const Stop*, const Stop*>, size_t, PairPointersHasher> distances_map_;    // Словарь расстояний между остановками
 
 	// Возвращает string_view с именем остановки по указателю на экземпляр структуры Stop
 	std::string_view GetStopName(const Stop* stop_ptr);
