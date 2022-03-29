@@ -19,7 +19,7 @@ namespace transport_catalogue::stat_reader
 std::ostream& operator<<(std::ostream&, const Stop*); 
 std::ostream& operator<<(std::ostream& os, const Route* route);
 
-void ProcessRequests(TransportCatalogue&, std::istream&);          // Производит чтение и разбор запросов к справочнику
-void ExecuteRequest(TransportCatalogue&, RequestQuery&);           // Отправляет запрос и осуществляет вывод ответа
+std::ostream& ProcessRequests(std::ostream&, TransportCatalogue&, std::istream&);   // Производит чтение и разбор запросов к справочнику
+std::ostream& ExecuteRequest(std::ostream&, TransportCatalogue&, RequestQuery&);    // Отправляет запрос и осуществляет вывод ответа
 
 }
