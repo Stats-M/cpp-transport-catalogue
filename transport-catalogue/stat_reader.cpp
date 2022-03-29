@@ -128,7 +128,10 @@ void ExecuteRequest(TransportCatalogue& tc, RequestQuery& query)
 			// Маршрут не найден
 			// Формируем ответ вручную, т.к. в result нет данных о номере маршрута
 			// Образец  "Bus 751: not found"
-			std::cout << "Bus "s + std::string(query.params) + ": not found"s << std::endl;
+			//std::cout << "Bus "s + std::string(query.params) + ": not found"s << std::endl;
+			std::stringstream ss;
+			ss << "Bus "s << std::string(query.params) << ": not found"s;
+			std::cout << ss.str() << std::endl;
 		}
 	}
 		break;
