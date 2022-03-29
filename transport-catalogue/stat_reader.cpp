@@ -48,7 +48,7 @@ std::ostream& operator<<(std::ostream& os, const Route* route)
 }
 
 
-void ProcessRequests(TransportCatalogue& tc, std::istream& is)
+std::ostream& ProcessRequests(std::ostream& os, TransportCatalogue& tc, std::istream& is)
 {
 	// Буфер для хранения текущей прочитанной строки
 	std::string line;
@@ -98,12 +98,14 @@ void ProcessRequests(TransportCatalogue& tc, std::istream& is)
 		// Запоминаем параметр(ы) команды
 		query.params = tmp.second;
 
-		ExecuteRequest(tc, query);
+		ExecuteRequest(std::cout, tc, query);
 	}
+
+	return os;
 }
 
 
-void ExecuteRequest(TransportCatalogue& tc, RequestQuery& query)
+std::ostream& ExecuteRequest(std::ostream& os, TransportCatalogue& tc, RequestQuery& query)
 {
 	using namespace std::literals;
 	
@@ -121,7 +123,7 @@ void ExecuteRequest(TransportCatalogue& tc, RequestQuery& query)
 			// Оператор << обрабатывает случаи когда у маршрута есть остановки или когда их 0 (r_ptr != nullptr)
 			std::stringstream ss;
 			ss << result.r_ptr;
-			std::cout << ss.str() << std::endl;
+			os << ss.str() << std::endl;
 		}
 		else
 		{
@@ -131,7 +133,7 @@ void ExecuteRequest(TransportCatalogue& tc, RequestQuery& query)
 			//std::cout << "Bus "s + std::string(query.params) + ": not found"s << std::endl;
 			std::stringstream ss;
 			ss << "Bus "s << std::string(query.params) << ": not found"s;
-			std::cout << ss.str() << std::endl;
+			os << ss.str() << std::endl;
 		}
 	}
 		break;
@@ -158,12 +160,12 @@ void ExecuteRequest(TransportCatalogue& tc, RequestQuery& query)
 		case RequestResultType::NoBuses:
 			// Для данной остановки ни одного маршрута не зарегистрировано. Формируем ответ
 			// Формат вывода: "Stop X: no buses"
-			std::cout << "Stop "s + std::string(query.params) + ": no buses"s << std::endl;
+			os << "Stop "s + std::string(query.params) + ": no buses"s << std::endl;
 			break;
 		case RequestResultType::StopNotExists:
 			// Такая остановка не найдена.
 		    // Формат сообщения: "Stop X: not found"
-			std::cout << "Stop "s + std::string(query.params) + ": not found"s << std::endl;
+			os << "Stop "s + std::string(query.params) + ": not found"s << std::endl;
 			break;
 		}
 	}
@@ -172,6 +174,8 @@ void ExecuteRequest(TransportCatalogue& tc, RequestQuery& query)
 	case RequestQueryType::NoOp:
 		break;
 	}
+
+	return os;
 }
 
 }
