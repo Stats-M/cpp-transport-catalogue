@@ -1,15 +1,15 @@
 /*
- * Здесь можно разместить код наполнения транспортного справочника данными из JSON,
- * а также код обработки запросов к базе и формирование массива ответов в формате JSON
+ * Р—РґРµСЃСЊ РјРѕР¶РЅРѕ СЂР°Р·РјРµСЃС‚РёС‚СЊ РєРѕРґ РЅР°РїРѕР»РЅРµРЅРёСЏ С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРіРѕ СЃРїСЂР°РІРѕС‡РЅРёРєР° РґР°РЅРЅС‹РјРё РёР· JSON,
+ * Р° С‚Р°РєР¶Рµ РєРѕРґ РѕР±СЂР°Р±РѕС‚РєРё Р·Р°РїСЂРѕСЃРѕРІ Рє Р±Р°Р·Рµ Рё С„РѕСЂРјРёСЂРѕРІР°РЅРёРµ РјР°СЃСЃРёРІР° РѕС‚РІРµС‚РѕРІ РІ С„РѕСЂРјР°С‚Рµ JSON
  *
- * Назначение модуля: конвертация в/из json исходных данных, данных запросов и ответов
- * справочника на запросы. Вся работа с данными в формате json происходит в json_reader
- * (а также main.cpp - вывод в потоки), вне json_reader'а данные обрабатываются во
- * внутренних форматах транспортного справочника. Это позволяет добавить обработку данных
- * в другом формате (напримео, XML), не меняя request_handler / transport_catalogue
+ * РќР°Р·РЅР°С‡РµРЅРёРµ РјРѕРґСѓР»СЏ: РєРѕРЅРІРµСЂС‚Р°С†РёСЏ РІ/РёР· json РёСЃС…РѕРґРЅС‹С… РґР°РЅРЅС‹С…, РґР°РЅРЅС‹С… Р·Р°РїСЂРѕСЃРѕРІ Рё РѕС‚РІРµС‚РѕРІ
+ * СЃРїСЂР°РІРѕС‡РЅРёРєР° РЅР° Р·Р°РїСЂРѕСЃС‹. Р’СЃСЏ СЂР°Р±РѕС‚Р° СЃ РґР°РЅРЅС‹РјРё РІ С„РѕСЂРјР°С‚Рµ json РїСЂРѕРёСЃС…РѕРґРёС‚ РІ json_reader
+ * (Р° С‚Р°РєР¶Рµ main.cpp - РІС‹РІРѕРґ РІ РїРѕС‚РѕРєРё), РІРЅРµ json_reader'Р° РґР°РЅРЅС‹Рµ РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‚СЃСЏ РІРѕ
+ * РІРЅСѓС‚СЂРµРЅРЅРёС… С„РѕСЂРјР°С‚Р°С… С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРіРѕ СЃРїСЂР°РІРѕС‡РЅРёРєР°. Р­С‚Рѕ РїРѕР·РІРѕР»СЏРµС‚ РґРѕР±Р°РІРёС‚СЊ РѕР±СЂР°Р±РѕС‚РєСѓ РґР°РЅРЅС‹С…
+ * РІ РґСЂСѓРіРѕРј С„РѕСЂРјР°С‚Рµ (РЅР°РїСЂРёРјРµРѕ, XML), РЅРµ РјРµРЅСЏСЏ request_handler / transport_catalogue
  *
- *   request_handler - интерфейс ("Фасад) транспортного справочника (двоичные данные)
- *       json_reader - интерфейс работы с данными формата json
+ *   request_handler - РёРЅС‚РµСЂС„РµР№СЃ ("Р¤Р°СЃР°Рґ) С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРіРѕ СЃРїСЂР°РІРѕС‡РЅРёРєР° (РґРІРѕРёС‡РЅС‹Рµ РґР°РЅРЅС‹Рµ)
+ *       json_reader - РёРЅС‚РµСЂС„РµР№СЃ СЂР°Р±РѕС‚С‹ СЃ РґР°РЅРЅС‹РјРё С„РѕСЂРјР°С‚Р° json
  */
 
 #include "json_reader.h"
@@ -24,61 +24,61 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 				 map_renderer::MapRenderer& mr,
 				 std::istream& input, std::ostream& output)
 {
-	// Временно отключено. Нужно делать static документ или класс чтобы можно было разделить
-	//LoadAsJSON(tc, input);     // Загружаем исходные данные в static переменную
-	//QueryAsJSON(rh, output);  // Отправляем запросы к справочнику и выводим результат
+	// Р’СЂРµРјРµРЅРЅРѕ РѕС‚РєР»СЋС‡РµРЅРѕ. РќСѓР¶РЅРѕ РґРµР»Р°С‚СЊ static РґРѕРєСѓРјРµРЅС‚ РёР»Рё РєР»Р°СЃСЃ С‡С‚РѕР±С‹ РјРѕР¶РЅРѕ Р±С‹Р»Рѕ СЂР°Р·РґРµР»РёС‚СЊ
+	//LoadAsJSON(tc, input);     // Р—Р°РіСЂСѓР¶Р°РµРј РёСЃС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РІ static РїРµСЂРµРјРµРЅРЅСѓСЋ
+	//QueryAsJSON(rh, output);  // РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃС‹ Рє СЃРїСЂР°РІРѕС‡РЅРёРєСѓ Рё РІС‹РІРѕРґРёРј СЂРµР·СѓР»СЊС‚Р°С‚
 
 	using namespace std::literals;
 
 	const json::Document j_doc = json::Load(input);
-	// Корневой узел JSON документа - словарь
+	// РљРѕСЂРЅРµРІРѕР№ СѓР·РµР» JSON РґРѕРєСѓРјРµРЅС‚Р° - СЃР»РѕРІР°СЂСЊ
 	const json::Dict j_dict = j_doc.GetRoot().AsMap();
-	// Находим точку начала секции входных данных в словаре
+	// РќР°С…РѕРґРёРј С‚РѕС‡РєСѓ РЅР°С‡Р°Р»Р° СЃРµРєС†РёРё РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂРµ
 	const auto base_requests_it = j_dict.find("base_requests"s);
 	if (base_requests_it != j_dict.cend())
 	{
-		// Есть входные данные. Формат данных - массив (вектор)
+		// Р•СЃС‚СЊ РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ. Р¤РѕСЂРјР°С‚ РґР°РЅРЅС‹С… - РјР°СЃСЃРёРІ (РІРµРєС‚РѕСЂ)
 		AddToDB(tc, base_requests_it->second.AsArray());
 	}
 
-	// Находим точку начала секции настроек рендерера в словаре
+	// РќР°С…РѕРґРёРј С‚РѕС‡РєСѓ РЅР°С‡Р°Р»Р° СЃРµРєС†РёРё РЅР°СЃС‚СЂРѕРµРє СЂРµРЅРґРµСЂРµСЂР° РІ СЃР»РѕРІР°СЂРµ
 	const auto renderer_settings_it = j_dict.find("render_settings"s);
 	if (renderer_settings_it != j_dict.cend())
 	{
-		// Есть секция настроек. Формат данных - словарь
+		// Р•СЃС‚СЊ СЃРµРєС†РёСЏ РЅР°СЃС‚СЂРѕРµРє. Р¤РѕСЂРјР°С‚ РґР°РЅРЅС‹С… - СЃР»РѕРІР°СЂСЊ
 		ReadRendererSettings(mr, renderer_settings_it->second.AsMap());
 	}
 
-	// Находим точку начала секции запросов в словаре
+	// РќР°С…РѕРґРёРј С‚РѕС‡РєСѓ РЅР°С‡Р°Р»Р° СЃРµРєС†РёРё Р·Р°РїСЂРѕСЃРѕРІ РІ СЃР»РѕРІР°СЂРµ
 	const auto stat_requests_it = j_dict.find("stat_requests"s);
 	if (stat_requests_it != j_dict.cend())
 	{
-		// Есть запросы к справочнику. Формат данных - массив (вектор)
+		// Р•СЃС‚СЊ Р·Р°РїСЂРѕСЃС‹ Рє СЃРїСЂР°РІРѕС‡РЅРёРєСѓ. Р¤РѕСЂРјР°С‚ РґР°РЅРЅС‹С… - РјР°СЃСЃРёРІ (РІРµРєС‚РѕСЂ)
 		//QueryAsJSON(stat_requests_it->second.AsArray(), rh, output);
 		ProcessQueriesJSON(rh, stat_requests_it->second.AsArray(), output);
 	}
 }
 
-/* Временно отключено. Нужно делать static документ или менять архитектуру модуля 
-*  чтобы можно было разделить обработку наполнения справочника и запросов к нему.
+/* Р’СЂРµРјРµРЅРЅРѕ РѕС‚РєР»СЋС‡РµРЅРѕ. РќСѓР¶РЅРѕ РґРµР»Р°С‚СЊ static РґРѕРєСѓРјРµРЅС‚ РёР»Рё РјРµРЅСЏС‚СЊ Р°СЂС…РёС‚РµРєС‚СѓСЂСѓ РјРѕРґСѓР»СЏ 
+*  С‡С‚РѕР±С‹ РјРѕР¶РЅРѕ Р±С‹Р»Рѕ СЂР°Р·РґРµР»РёС‚СЊ РѕР±СЂР°Р±РѕС‚РєСѓ РЅР°РїРѕР»РЅРµРЅРёСЏ СЃРїСЂР°РІРѕС‡РЅРёРєР° Рё Р·Р°РїСЂРѕСЃРѕРІ Рє РЅРµРјСѓ.
 void LoadAsJSON(transport_catalogue::TransportCatalogue& tc, std::istream& input)
 {
 	const json::Document j_doc = json::Load(input);
-	// Корневой узел JSON документа - словарь
+	// РљРѕСЂРЅРµРІРѕР№ СѓР·РµР» JSON РґРѕРєСѓРјРµРЅС‚Р° - СЃР»РѕРІР°СЂСЊ
 	const json::Dict j_dict = j_doc.GetRoot().AsMap();
-	// Находим точку начала секции входных данных в словаре
+	// РќР°С…РѕРґРёРј С‚РѕС‡РєСѓ РЅР°С‡Р°Р»Р° СЃРµРєС†РёРё РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С… РІ СЃР»РѕРІР°СЂРµ
 	const auto base_requests_it = j_dict.find("base_requests");
 	if (base_requests_it != j_dict.cend())
 	{
-		// Есть входные данные. Формат данных - массив (вектор)
+		// Р•СЃС‚СЊ РІС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ. Р¤РѕСЂРјР°С‚ РґР°РЅРЅС‹С… - РјР°СЃСЃРёРІ (РІРµРєС‚РѕСЂ)
 		AddToDB(tc, base_requests_it->second.AsArray());
 	}
 
-	// Находим точку начала секции запросов в словаре
+	// РќР°С…РѕРґРёРј С‚РѕС‡РєСѓ РЅР°С‡Р°Р»Р° СЃРµРєС†РёРё Р·Р°РїСЂРѕСЃРѕРІ РІ СЃР»РѕРІР°СЂРµ
 	const auto stat_requests_it = j_dict.find("stat_requests");
 	if (stat_requests_it != j_dict.cend())
 	{
-		// Есть запросы к справочнику. Формат данных - массив (вектор)
+		// Р•СЃС‚СЊ Р·Р°РїСЂРѕСЃС‹ Рє СЃРїСЂР°РІРѕС‡РЅРёРєСѓ. Р¤РѕСЂРјР°С‚ РґР°РЅРЅС‹С… - РјР°СЃСЃРёРІ (РІРµРєС‚РѕСЂ)
 		//ProcessAsJSON(stat_requests_it->second.AsArray(), rh, output);
 	}
 
@@ -94,50 +94,50 @@ void QueryAsJSON(const json::Array& j_arr, transport_catalogue::RequestHandler& 
 
 void AddToDB(transport_catalogue::TransportCatalogue& tc, const json::Array& j_arr)
 {
-	// Каждый элемент массива входных данных j_arr - словарь.
+	// РљР°Р¶РґС‹Р№ СЌР»РµРјРµРЅС‚ РјР°СЃСЃРёРІР° РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С… j_arr - СЃР»РѕРІР°СЂСЊ.
 
 	using namespace std::literals;
 
-	// Проход 1. Заносим данные о названиях и координатах остановок
+	// РџСЂРѕС…РѕРґ 1. Р—Р°РЅРѕСЃРёРј РґР°РЅРЅС‹Рµ Рѕ РЅР°Р·РІР°РЅРёСЏС… Рё РєРѕРѕСЂРґРёРЅР°С‚Р°С… РѕСЃС‚Р°РЅРѕРІРѕРє
 	for (const auto& element : j_arr)
 	{
-		// Ищем ключ "type", хранящий тип записи
+		// РС‰РµРј РєР»СЋС‡ "type", С…СЂР°РЅСЏС‰РёР№ С‚РёРї Р·Р°РїРёСЃРё
 		const auto request_type = element.AsMap().find("type"s);
 		if (request_type != element.AsMap().end())
 		{
 			if (request_type->second.AsString() == "Stop"s)
 			{
-				// Это остановка (тип записи - словарь). Обрабатываем название и координаты 
+				// Р­С‚Рѕ РѕСЃС‚Р°РЅРѕРІРєР° (С‚РёРї Р·Р°РїРёСЃРё - СЃР»РѕРІР°СЂСЊ). РћР±СЂР°Р±Р°С‚С‹РІР°РµРј РЅР°Р·РІР°РЅРёРµ Рё РєРѕРѕСЂРґРёРЅР°С‚С‹ 
 				AddStopData(tc, element.AsMap());
 			}
 		}
 	}
 
-	// Проход 2. Заносим данные о расстояниях между остановками
+	// РџСЂРѕС…РѕРґ 2. Р—Р°РЅРѕСЃРёРј РґР°РЅРЅС‹Рµ Рѕ СЂР°СЃСЃС‚РѕСЏРЅРёСЏС… РјРµР¶РґСѓ РѕСЃС‚Р°РЅРѕРІРєР°РјРё
 	for (const auto& element : j_arr)
 	{
-		// Ищем ключ "type", хранящий тип записи
+		// РС‰РµРј РєР»СЋС‡ "type", С…СЂР°РЅСЏС‰РёР№ С‚РёРї Р·Р°РїРёСЃРё
 		const auto request_type = element.AsMap().find("type"s);
 		if (request_type != element.AsMap().end())
 		{
 			if (request_type->second.AsString() == "Stop"s)
 			{
-				// Это остановка (тип записи - словарь). Обрабатываем расстояния 
+				// Р­С‚Рѕ РѕСЃС‚Р°РЅРѕРІРєР° (С‚РёРї Р·Р°РїРёСЃРё - СЃР»РѕРІР°СЂСЊ). РћР±СЂР°Р±Р°С‚С‹РІР°РµРј СЂР°СЃСЃС‚РѕСЏРЅРёСЏ 
 				AddStopDistance(tc, element.AsMap());
 			}
 		}
 	}
 
-	// Проход 3. Заносим данные о маршрутах
+	// РџСЂРѕС…РѕРґ 3. Р—Р°РЅРѕСЃРёРј РґР°РЅРЅС‹Рµ Рѕ РјР°СЂС€СЂСѓС‚Р°С…
 	for (const auto& element : j_arr)
 	{
-		// Ищем ключ "type", хранящий тип записи
+		// РС‰РµРј РєР»СЋС‡ "type", С…СЂР°РЅСЏС‰РёР№ С‚РёРї Р·Р°РїРёСЃРё
 		const auto request_type = element.AsMap().find("type"s);
 		if (request_type != element.AsMap().end())
 		{
 			if (request_type->second.AsString() == "Bus"s)
 			{
-				// Это маршрут (тип записи - словарь). Обрабатываем полностью
+				// Р­С‚Рѕ РјР°СЂС€СЂСѓС‚ (С‚РёРї Р·Р°РїРёСЃРё - СЃР»РѕРІР°СЂСЊ). РћР±СЂР°Р±Р°С‚С‹РІР°РµРј РїРѕР»РЅРѕСЃС‚СЊСЋ
 				AddRouteData(tc, element.AsMap());
 			}
 		}
@@ -161,7 +161,7 @@ void AddStopDistance(transport_catalogue::TransportCatalogue& tc, const json::Di
 
 	const std::string from_stop_name = j_dict.at("name"s).AsString();
 	transport_catalogue::StopPtr from_ptr = tc.GetStopByName(from_stop_name);
-	// Продолжаем обработку только если остановка отправления есть в справочнике
+	// РџСЂРѕРґРѕР»Р¶Р°РµРј РѕР±СЂР°Р±РѕС‚РєСѓ С‚РѕР»СЊРєРѕ РµСЃР»Рё РѕСЃС‚Р°РЅРѕРІРєР° РѕС‚РїСЂР°РІР»РµРЅРёСЏ РµСЃС‚СЊ РІ СЃРїСЂР°РІРѕС‡РЅРёРєРµ
 	if (from_ptr != nullptr)
 	{
 		const json::Dict stops = j_dict.at("road_distances"s).AsMap();
@@ -174,11 +174,11 @@ void AddStopDistance(transport_catalogue::TransportCatalogue& tc, const json::Di
 
 void AddRouteData(transport_catalogue::TransportCatalogue& tc, const json::Dict& j_dict)
 {
-	// Алгоритм:
-	// 1. Создаем локальную переменную типа Route
-	// 2. Заполняем имя маршрута, тип и указатели на все остановки (nullptr отбрасываем)
-	// 3. Передаем Route через move в TC, который производит заполнение расчетных 
-	//    полей и перемещает итоговый объект в хранилище.
+	// РђР»РіРѕСЂРёС‚Рј:
+	// 1. РЎРѕР·РґР°РµРј Р»РѕРєР°Р»СЊРЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ С‚РёРїР° Route
+	// 2. Р—Р°РїРѕР»РЅСЏРµРј РёРјСЏ РјР°СЂС€СЂСѓС‚Р°, С‚РёРї Рё СѓРєР°Р·Р°С‚РµР»Рё РЅР° РІСЃРµ РѕСЃС‚Р°РЅРѕРІРєРё (nullptr РѕС‚Р±СЂР°СЃС‹РІР°РµРј)
+	// 3. РџРµСЂРµРґР°РµРј Route С‡РµСЂРµР· move РІ TC, РєРѕС‚РѕСЂС‹Р№ РїСЂРѕРёР·РІРѕРґРёС‚ Р·Р°РїРѕР»РЅРµРЅРёРµ СЂР°СЃС‡РµС‚РЅС‹С… 
+	//    РїРѕР»РµР№ Рё РїРµСЂРµРјРµС‰Р°РµС‚ РёС‚РѕРіРѕРІС‹Р№ РѕР±СЉРµРєС‚ РІ С…СЂР°РЅРёР»РёС‰Рµ.
 
 	using namespace std::literals;
 
@@ -186,18 +186,18 @@ void AddRouteData(transport_catalogue::TransportCatalogue& tc, const json::Dict&
 	new_route.route_name = j_dict.at("name"s).AsString();
 	new_route.is_circular = j_dict.at("is_roundtrip"s).AsBool();
 
-	// Формируем вектор указателей на остановки
+	// Р¤РѕСЂРјРёСЂСѓРµРј РІРµРєС‚РѕСЂ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° РѕСЃС‚Р°РЅРѕРІРєРё
 	for (auto& element : j_dict.at("stops"s).AsArray())
 	{
-		// Получаем либо указатель, либо nullptr
+		// РџРѕР»СѓС‡Р°РµРј Р»РёР±Рѕ СѓРєР°Р·Р°С‚РµР»СЊ, Р»РёР±Рѕ nullptr
 		transport_catalogue::StopPtr tmp_ptr = tc.GetStopByName(element.AsString());
 		if (tmp_ptr != nullptr)
 		{
-			// Добавляем ТОЛЬКО существующие остановки (в данной версии)
+			// Р”РѕР±Р°РІР»СЏРµРј РўРћР›Р¬РљРћ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёРµ РѕСЃС‚Р°РЅРѕРІРєРё (РІ РґР°РЅРЅРѕР№ РІРµСЂСЃРёРё)
 			new_route.stops.push_back(tmp_ptr);
 		}
 	}
-	// Добавляем маршрут. Он может иметь и 0 (ноль) остановок, это валидный случай
+	// Р”РѕР±Р°РІР»СЏРµРј РјР°СЂС€СЂСѓС‚. РћРЅ РјРѕР¶РµС‚ РёРјРµС‚СЊ Рё 0 (РЅРѕР»СЊ) РѕСЃС‚Р°РЅРѕРІРѕРє, СЌС‚Рѕ РІР°Р»РёРґРЅС‹Р№ СЃР»СѓС‡Р°Р№
 	tc.AddRoute(std::move(new_route));
 }
 
@@ -207,14 +207,14 @@ const svg::Color ConvertColor_JSON2SVG(const json::Node& color)
 {
 	if (color.IsString())
 	{
-		// Цвет в формате std::string
+		// Р¦РІРµС‚ РІ С„РѕСЂРјР°С‚Рµ std::string
 		return svg::Color{ color.AsString() };
 	}
 	else if (color.IsArray())
 	{
 		if (color.AsArray().size() == 3)
 		{
-			// Цвет в формате RGB, значения цветности 0...255
+			// Р¦РІРµС‚ РІ С„РѕСЂРјР°С‚Рµ RGB, Р·РЅР°С‡РµРЅРёСЏ С†РІРµС‚РЅРѕСЃС‚Рё 0...255
 			return svg::Rgb
 			{
 				static_cast<uint8_t>(color.AsArray()[0].AsInt()),
@@ -224,7 +224,7 @@ const svg::Color ConvertColor_JSON2SVG(const json::Node& color)
 		}
 		else if (color.AsArray().size() == 4)
 		{
-			// Цвет в формате RGBA, значения цветности 0...255
+			// Р¦РІРµС‚ РІ С„РѕСЂРјР°С‚Рµ RGBA, Р·РЅР°С‡РµРЅРёСЏ С†РІРµС‚РЅРѕСЃС‚Рё 0...255
 			return svg::Rgba
 			{
 				static_cast<uint8_t>(color.AsArray()[0].AsInt()),
@@ -235,7 +235,7 @@ const svg::Color ConvertColor_JSON2SVG(const json::Node& color)
 		}
 	}
 
-	// Возвращаем monostate если никакой вариант не подошел
+	// Р’РѕР·РІСЂР°С‰Р°РµРј monostate РµСЃР»Рё РЅРёРєР°РєРѕР№ РІР°СЂРёР°РЅС‚ РЅРµ РїРѕРґРѕС€РµР»
 	return svg::Color();
 }
 
@@ -255,13 +255,13 @@ void ReadRendererSettings(map_renderer::MapRenderer& mr, const json::Dict& j_dic
 	new_settings.stop_label_offset = { j_dict.at("stop_label_offset").AsArray()[0].AsDouble(), j_dict.at("stop_label_offset").AsArray()[1].AsDouble() };
 	new_settings.underlayer_color = ConvertColor_JSON2SVG(j_dict.at("underlayer_color"));
 	new_settings.underlayer_width = j_dict.at("underlayer_width").AsDouble();
-	new_settings.color_palette.clear();    // Очистим массив от дефолтных элементов
+	new_settings.color_palette.clear();    // РћС‡РёСЃС‚РёРј РјР°СЃСЃРёРІ РѕС‚ РґРµС„РѕР»С‚РЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 	for (const auto& color : j_dict.at("color_palette").AsArray())
 	{
 		new_settings.color_palette.emplace_back(ConvertColor_JSON2SVG(color));
 	}
 
-	// Применяем новые настройки рендера
+	// РџСЂРёРјРµРЅСЏРµРј РЅРѕРІС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё СЂРµРЅРґРµСЂР°
 	mr.ApplyRenderSettings(new_settings);
 }
 
@@ -271,15 +271,15 @@ void ProcessQueriesJSON(transport_catalogue::RequestHandler& rh, const json::Arr
 {
 	using namespace std::literals;
 
-	json::Array processed_queries;  // Вектор json::Node с результатами запросов
+	json::Array processed_queries;  // Р’РµРєС‚РѕСЂ json::Node СЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°РјРё Р·Р°РїСЂРѕСЃРѕРІ
 
-	// Для каждого запроса в j_arr получаем ответ в виде json::Node
+	// Р”Р»СЏ РєР°Р¶РґРѕРіРѕ Р·Р°РїСЂРѕСЃР° РІ j_arr РїРѕР»СѓС‡Р°РµРј РѕС‚РІРµС‚ РІ РІРёРґРµ json::Node
 	for (const auto& query : j_arr)
 	{
 		const auto request_type = query.AsMap().find("type"s);
 		if (request_type != query.AsMap().cend())
 		{
-			// Есть поле типа запроса "type", обрабатываем
+			// Р•СЃС‚СЊ РїРѕР»Рµ С‚РёРїР° Р·Р°РїСЂРѕСЃР° "type", РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј
 			if (request_type->second.AsString() == "Stop"s)
 			{
 				processed_queries.emplace_back(ProcessStopQuery(rh, query.AsMap()));
@@ -306,20 +306,20 @@ const json::Node ProcessStopQuery(transport_catalogue::RequestHandler& rh, const
 
 	if (stop_query_ptr == nullptr)
 	{
-		// Такой остановки нет. Генерируем сообщение об ошибке
+		// РўР°РєРѕР№ РѕСЃС‚Р°РЅРѕРІРєРё РЅРµС‚. Р“РµРЅРµСЂРёСЂСѓРµРј СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ
 		return json::Dict{ {"request_id"s, j_dict.at("id"s).AsInt()}, 
 						  {"error_message"s, "not found"s}};
 	}
 
-	// Получаем отсортированный список маршрутов (может быть и 0 маршрутов)
+	// РџРѕР»СѓС‡Р°РµРј РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹Р№ СЃРїРёСЃРѕРє РјР°СЂС€СЂСѓС‚РѕРІ (РјРѕР¶РµС‚ Р±С‹С‚СЊ Рё 0 РјР°СЂС€СЂСѓС‚РѕРІ)
 	json::Array routes;
 	for (auto& bus : stop_query_ptr.value()->buses)
 	{
-		// Конвертируем из sv в string
+		// РљРѕРЅРІРµСЂС‚РёСЂСѓРµРј РёР· sv РІ string
 		routes.push_back(std::string(bus));
 	}
 
-	// Формируем JSON ответ
+	// Р¤РѕСЂРјРёСЂСѓРµРј JSON РѕС‚РІРµС‚
 	return json::Dict{ {"buses"s, routes},
 					  {"request_id"s, j_dict.at("id"s).AsInt()} };
 }
@@ -333,12 +333,12 @@ const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler& rh, cons
 
 	if (route_query_ptr == nullptr)
 	{
-		// Такого маршрута нет. Генерируем сообщение об ошибке
+		// РўР°РєРѕРіРѕ РјР°СЂС€СЂСѓС‚Р° РЅРµС‚. Р“РµРЅРµСЂРёСЂСѓРµРј СЃРѕРѕР±С‰РµРЅРёРµ РѕР± РѕС€РёР±РєРµ
 		return json::Dict{ {"request_id"s, j_dict.at("id"s).AsInt()},
 						  {"error_message"s, "not found"s} };
 	}
 
-	// Формируем JSON ответ
+	// Р¤РѕСЂРјРёСЂСѓРµРј JSON РѕС‚РІРµС‚
 	return json::Dict{ {"curvature"s, route_query_ptr.value()->curvature},
 					  {"request_id"s, j_dict.at("id"s).AsInt()},
 					  {"route_length"s, static_cast<int>(route_query_ptr.value()->meters_route_length)},
@@ -351,13 +351,13 @@ const json::Node ProcessMapQuery(transport_catalogue::RequestHandler& rh, const 
 {
 	using namespace std::literals;
 
-	// Запрашиваем SVG документ через RequestHandler
+	// Р—Р°РїСЂР°С€РёРІР°РµРј SVG РґРѕРєСѓРјРµРЅС‚ С‡РµСЂРµР· RequestHandler
 	svg::Document svg_map = rh.GetMapRender();
-	// Выводим его в текстовый поток через svg::Document.Render(stream)
+	// Р’С‹РІРѕРґРёРј РµРіРѕ РІ С‚РµРєСЃС‚РѕРІС‹Р№ РїРѕС‚РѕРє С‡РµСЂРµР· svg::Document.Render(stream)
 	std::ostringstream os_stream;
 	svg_map.Render(os_stream);
 
-	// Формируем JSON ответ, получая std:string из содержимого текстового потока
+	// Р¤РѕСЂРјРёСЂСѓРµРј JSON РѕС‚РІРµС‚, РїРѕР»СѓС‡Р°СЏ std:string РёР· СЃРѕРґРµСЂР¶РёРјРѕРіРѕ С‚РµРєСЃС‚РѕРІРѕРіРѕ РїРѕС‚РѕРєР°
 	return json::Dict{ {"map"s, os_stream.str()},
 					  {"request_id"s, j_dict.at("id"s).AsInt()} };
 }
