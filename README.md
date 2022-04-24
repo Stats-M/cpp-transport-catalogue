@@ -11,6 +11,7 @@
 - JSON load / output
 - SVG graph output
 - Curiously Recurring Template Pattern (CRTP)
+- C++17
 
 
 # STOP STOP STOP STOP STOP
