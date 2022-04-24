@@ -21,7 +21,7 @@ struct Coordinates
 class CoordinatesHasher
 {
 public:
-    size_t operator()(const Coordinates&) const;
+    std::size_t operator()(const Coordinates&) const;
 };
 
 // Функция рассчитывает расстояние между остановками по поверхности
