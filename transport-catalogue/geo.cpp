@@ -19,7 +19,7 @@ bool geo::Coordinates::operator!=(const Coordinates& other) const
 
 std::size_t CoordinatesHasher::operator()(const Coordinates& coords) const
 {
-    return static_cast<size_t>(coords.lat + 37 * coords.lng);
+    return static_cast<std::size_t>(coords.lat + 37 * coords.lng);
 }
 
 double ComputeDistance(Coordinates from, Coordinates to)
