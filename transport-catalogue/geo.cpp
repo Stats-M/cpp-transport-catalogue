@@ -1,4 +1,4 @@
-#define _USE_MATH_DEFINES  // Для константы Пи
+#define _USE_MATH_DEFINES  // Р”Р»СЏ РєРѕРЅСЃС‚Р°РЅС‚С‹ РџРё
 
 #include "geo.h"
 
