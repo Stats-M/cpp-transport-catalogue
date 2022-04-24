@@ -7,7 +7,7 @@
 ### Использованные идеомы, технологии и элементы языка
 - Unordered map/set
 - OOP: inheritance, abstract interfaces, final classes
-- std::variant and atd:optional
+- std::variant and std:optional
 - JSON load / output
 - SVG graph output
 - Curiously Recurring Template Pattern (CRTP)
