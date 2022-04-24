@@ -1,7 +1,7 @@
 /*
- * В этом файле вы можете разместить код, отвечающий за визуализацию карты маршрутов в формате SVG.
- * Визуализация маршрутов вам понадобится во второй части итогового проекта.
- * Пока можете оставить файл пустым.
+ * Р’ СЌС‚РѕРј С„Р°Р№Р»Рµ РІС‹ РјРѕР¶РµС‚Рµ СЂР°Р·РјРµСЃС‚РёС‚СЊ РєРѕРґ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РІРёР·СѓР°Р»РёР·Р°С†РёСЋ РєР°СЂС‚С‹ РјР°СЂС€СЂСѓС‚РѕРІ РІ С„РѕСЂРјР°С‚Рµ SVG.
+ * Р’РёР·СѓР°Р»РёР·Р°С†РёСЏ РјР°СЂС€СЂСѓС‚РѕРІ РІР°Рј РїРѕРЅР°РґРѕР±РёС‚СЃСЏ РІРѕ РІС‚РѕСЂРѕР№ С‡Р°СЃС‚Рё РёС‚РѕРіРѕРІРѕРіРѕ РїСЂРѕРµРєС‚Р°.
+ * РџРѕРєР° РјРѕР¶РµС‚Рµ РѕСЃС‚Р°РІРёС‚СЊ С„Р°Р№Р» РїСѓСЃС‚С‹Рј.
  */
 
 #include "map_renderer.h"
@@ -22,7 +22,7 @@ svg::Point SphereProjector::operator()(geo::Coordinates coords) const
             (max_lat_ - coords.lat) * zoom_coeff_ + padding_ };
 }
 
-// -----Классы фигур, реализующие интерфейс Drawable----
+// -----РљР»Р°СЃСЃС‹ С„РёРіСѓСЂ, СЂРµР°Р»РёР·СѓСЋС‰РёРµ РёРЅС‚РµСЂС„РµР№СЃ Drawable----
 
 RouteLine::RouteLine(const std::vector<svg::Point>& stop_points, 
 					 const svg::Color& stroke_color, 
@@ -37,11 +37,11 @@ void RouteLine::Draw(svg::ObjectContainer& container) const
 	{
 		polyline.AddPoint(point);
 	}
-	polyline.SetStrokeColor(stroke_color_);                 // StrokeColor задается в конструкторе
-	polyline.SetFillColor(svg::NoneColor);                  // FillColor должен быть none
-	polyline.SetStrokeWidth(renderer_settings_.line_width); // StrokeWidth должна быть = настройке line_width
-	polyline.SetStrokeLineCap(svg::StrokeLineCap::ROUND);   // StrokeLineCap должна быть Round
-	polyline.SetStrokeLineJoin(svg::StrokeLineJoin::ROUND); // StrokeLineJoin должна быть Round
+	polyline.SetStrokeColor(stroke_color_);                 // StrokeColor Р·Р°РґР°РµС‚СЃСЏ РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ
+	polyline.SetFillColor(svg::NoneColor);                  // FillColor РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ none
+	polyline.SetStrokeWidth(renderer_settings_.line_width); // StrokeWidth РґРѕР»Р¶РЅР° Р±С‹С‚СЊ = РЅР°СЃС‚СЂРѕР№РєРµВ line_width
+	polyline.SetStrokeLineCap(svg::StrokeLineCap::ROUND);   // StrokeLineCap РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Round
+	polyline.SetStrokeLineJoin(svg::StrokeLineJoin::ROUND); // StrokeLineJoin РґРѕР»Р¶РЅР° Р±С‹С‚СЊ Round
 	container.Add(polyline);
 }
 
@@ -58,38 +58,38 @@ void TextLabel::Draw(svg::ObjectContainer& container) const
 {
 	using namespace std::literals;
 
-	// Алгоритм:
-	// 1. Формируем текст переднего плана
-	// 2. На его основе формируем текст заднего плана (фон)
-	// 3. Добавляем в контейнер в обратном порядке
+	// РђР»РіРѕСЂРёС‚Рј:
+	// 1. Р¤РѕСЂРјРёСЂСѓРµРј С‚РµРєСЃС‚ РїРµСЂРµРґРЅРµРіРѕ РїР»Р°РЅР°
+	// 2. РќР° РµРіРѕ РѕСЃРЅРѕРІРµ С„РѕСЂРјРёСЂСѓРµРј С‚РµРєСЃС‚ Р·Р°РґРЅРµРіРѕ РїР»Р°РЅР° (С„РѕРЅ)
+	// 3. Р”РѕР±Р°РІР»СЏРµРј РІ РєРѕРЅС‚РµР№РЅРµСЂ РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ
 
-	svg::Text fore_text;   // Текст переднего плана
+	svg::Text fore_text;   // РўРµРєСЃС‚ РїРµСЂРµРґРЅРµРіРѕ РїР»Р°РЅР°
 
 	fore_text.SetPosition(label_point_);
 	fore_text.SetFontFamily("Verdana"s);
 	fore_text.SetData(text_);
 
-	// Отдельная обработка меток маршрутов и остановок
+	// РћС‚РґРµР»СЊРЅР°СЏ РѕР±СЂР°Р±РѕС‚РєР° РјРµС‚РѕРє РјР°СЂС€СЂСѓС‚РѕРІ Рё РѕСЃС‚Р°РЅРѕРІРѕРє
 	if (is_stop_)
 	{
-		// Параметры, уникальные для метки остановки
+		// РџР°СЂР°РјРµС‚СЂС‹, СѓРЅРёРєР°Р»СЊРЅС‹Рµ РґР»СЏ РјРµС‚РєРё РѕСЃС‚Р°РЅРѕРІРєРё
 		fore_text.SetOffset(renderer_settings_.stop_label_offset);
 		fore_text.SetFontSize(renderer_settings_.stop_label_font_size);
 		fore_text.SetFillColor("black"s);
 	}
 	else
 	{
-		// Параметры, уникальные для метки маршрута
+		// РџР°СЂР°РјРµС‚СЂС‹, СѓРЅРёРєР°Р»СЊРЅС‹Рµ РґР»СЏ РјРµС‚РєРё РјР°СЂС€СЂСѓС‚Р°
 		fore_text.SetOffset(renderer_settings_.bus_label_offset);
 		fore_text.SetFontSize(renderer_settings_.bus_label_font_size);
 		fore_text.SetFontWeight("bold"s);
 		fore_text.SetFillColor(fill_fore_color_);
 	}
 
-	 // Текст заднего плана (фон) создаем на основе текста переднего плана
+	 // РўРµРєСЃС‚ Р·Р°РґРЅРµРіРѕ РїР»Р°РЅР° (С„РѕРЅ) СЃРѕР·РґР°РµРј РЅР° РѕСЃРЅРѕРІРµ С‚РµРєСЃС‚Р° РїРµСЂРµРґРЅРµРіРѕ РїР»Р°РЅР°
 	svg::Text back_text = fore_text;
 
-	// Параметры, уникальные для фонового текста
+	// РџР°СЂР°РјРµС‚СЂС‹, СѓРЅРёРєР°Р»СЊРЅС‹Рµ РґР»СЏ С„РѕРЅРѕРІРѕРіРѕ С‚РµРєСЃС‚Р°
 	back_text.SetFillColor(renderer_settings_.underlayer_color);
 	back_text.SetStrokeColor(renderer_settings_.underlayer_color);
 	back_text.SetStrokeWidth(renderer_settings_.underlayer_width);
@@ -128,10 +128,10 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 {
 	using namespace std::literals;
 
-	// 1. Нормализуем координаты для переданных в рендерер точек (только непустые маршруты)
-	std::unordered_set<geo::Coordinates, geo::CoordinatesHasher> all_coords;                             // Кэш координат для калибровки
-	//std::unordered_map<geo::Coordinates, std::string_view, geo::CoordinatesHasher> all_unique_stops;   // Кэш уникальных остановок
-	std::map<std::string_view, geo::Coordinates> all_unique_stops;               // Кэш уникальных остановок
+	// 1. РќРѕСЂРјР°Р»РёР·СѓРµРј РєРѕРѕСЂРґРёРЅР°С‚С‹ РґР»СЏ РїРµСЂРµРґР°РЅРЅС‹С… РІ СЂРµРЅРґРµСЂРµСЂ С‚РѕС‡РµРє (С‚РѕР»СЊРєРѕ РЅРµРїСѓСЃС‚С‹Рµ РјР°СЂС€СЂСѓС‚С‹)
+	std::unordered_set<geo::Coordinates, geo::CoordinatesHasher> all_coords;                             // РљСЌС€ РєРѕРѕСЂРґРёРЅР°С‚ РґР»СЏ РєР°Р»РёР±СЂРѕРІРєРё
+	//std::unordered_map<geo::Coordinates, std::string_view, geo::CoordinatesHasher> all_unique_stops;   // РљСЌС€ СѓРЅРёРєР°Р»СЊРЅС‹С… РѕСЃС‚Р°РЅРѕРІРѕРє
+	std::map<std::string_view, geo::Coordinates> all_unique_stops;               // РљСЌС€ СѓРЅРёРєР°Р»СЊРЅС‹С… РѕСЃС‚Р°РЅРѕРІРѕРє
 	for (const auto& [name, data] : routes_to_render)
 	{
 		//for (const auto& stop : data.stop_coords)
@@ -145,44 +145,44 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 			all_unique_stops.insert(make_pair(data.stop_names[i], data.stop_coords[i]));
 		}
 	}
-	// Пропускаем через проектор ВСЕ координаты и получаем поправочный коэффициент
+	// РџСЂРѕРїСѓСЃРєР°РµРј С‡РµСЂРµР· РїСЂРѕРµРєС‚РѕСЂ Р’РЎР• РєРѕРѕСЂРґРёРЅР°С‚С‹ Рё РїРѕР»СѓС‡Р°РµРј РїРѕРїСЂР°РІРѕС‡РЅС‹Р№ РєРѕСЌС„С„РёС†РёРµРЅС‚
 	SphereProjector sp{ std::begin(all_coords), std::end(all_coords), 
 		settings_.width, settings_.height, settings_.padding};
 
-	// 2. Добавляем в контейнер объекты Drawable, используя нормализованные координаты
-	std::vector<std::unique_ptr<svg::Drawable>> picture_;   // Контейнер Drawable-объектов
-	// 2.1 Линии маршрутов
+	// 2. Р”РѕР±Р°РІР»СЏРµРј РІ РєРѕРЅС‚РµР№РЅРµСЂ РѕР±СЉРµРєС‚С‹ Drawable, РёСЃРїРѕР»СЊР·СѓСЏ РЅРѕСЂРјР°Р»РёР·РѕРІР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹
+	std::vector<std::unique_ptr<svg::Drawable>> picture_;   // РљРѕРЅС‚РµР№РЅРµСЂ Drawable-РѕР±СЉРµРєС‚РѕРІ
+	// 2.1 Р›РёРЅРёРё РјР°СЂС€СЂСѓС‚РѕРІ
 	for (const auto& [name, data] : routes_to_render)
 	{
-		std::vector<svg::Point> points;  // Вектор нормализованных координат
+		std::vector<svg::Point> points;  // Р’РµРєС‚РѕСЂ РЅРѕСЂРјР°Р»РёР·РѕРІР°РЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚
 		for (const auto& stop : data.stop_coords)
 		{
 			points.push_back(sp(stop));
 		}
-		// формируем unique_ptr
+		// С„РѕСЂРјРёСЂСѓРµРј unique_ptr
 		picture_.emplace_back(std::make_unique<RouteLine>(RouteLine{ points, GetColorFromPallete() , settings_ }));
 	}
 
-	// 2.2 Метки маршрутов
-	ResetPallette();  // Сбрасываем текущий цвет палитры, начинаем с первого
+	// 2.2 РњРµС‚РєРё РјР°СЂС€СЂСѓС‚РѕРІ
+	ResetPallette();  // РЎР±СЂР°СЃС‹РІР°РµРј С‚РµРєСѓС‰РёР№ С†РІРµС‚ РїР°Р»РёС‚СЂС‹, РЅР°С‡РёРЅР°РµРј СЃ РїРµСЂРІРѕРіРѕ
 	for (const auto& [name, data] : routes_to_render)
 	{
-		// Получаем цвет текущего маршрута
+		// РџРѕР»СѓС‡Р°РµРј С†РІРµС‚ С‚РµРєСѓС‰РµРіРѕ РјР°СЂС€СЂСѓС‚Р°
 		svg::Color current_line_color = GetColorFromPallete();
-		// Выводим первую метку маршрута (стартовую)
+		// Р’С‹РІРѕРґРёРј РїРµСЂРІСѓСЋ РјРµС‚РєСѓ РјР°СЂС€СЂСѓС‚Р° (СЃС‚Р°СЂС‚РѕРІСѓСЋ)
 		picture_.emplace_back(std::make_unique<TextLabel>(TextLabel{sp(data.stop_coords[0]),
 														  name, 
 														  current_line_color,
 														  settings_, 
 														  false}));
-		// Если маршрут НЕ кольцевой и у него больше 1 остановки, выводим метку конечной остановки
+		// Р•СЃР»Рё РјР°СЂС€СЂСѓС‚ РќР• РєРѕР»СЊС†РµРІРѕР№ Рё Сѓ РЅРµРіРѕ Р±РѕР»СЊС€Рµ 1 РѕСЃС‚Р°РЅРѕРІРєРё, РІС‹РІРѕРґРёРј РјРµС‚РєСѓ РєРѕРЅРµС‡РЅРѕР№ РѕСЃС‚Р°РЅРѕРІРєРё
 		if ((!data.is_circular) && (data.stop_coords.size() > 1))
 		{
-			// Учитываем, что для некольцевых маршрутов координаты хранятся туда и обратно (А,В,А) и всегда нечетны
-			// Выводим, если начальная и конечная точки не совпадают А <> В
+			// РЈС‡РёС‚С‹РІР°РµРј, С‡С‚Рѕ РґР»СЏ РЅРµРєРѕР»СЊС†РµРІС‹С… РјР°СЂС€СЂСѓС‚РѕРІ РєРѕРѕСЂРґРёРЅР°С‚С‹ С…СЂР°РЅСЏС‚СЃСЏ С‚СѓРґР° Рё РѕР±СЂР°С‚РЅРѕ (Рђ,Р’,Рђ) Рё РІСЃРµРіРґР° РЅРµС‡РµС‚РЅС‹
+			// Р’С‹РІРѕРґРёРј, РµСЃР»Рё РЅР°С‡Р°Р»СЊРЅР°СЏ Рё РєРѕРЅРµС‡РЅР°СЏ С‚РѕС‡РєРё РЅРµ СЃРѕРІРїР°РґР°СЋС‚ Рђ <> Р’
 			if (data.stop_coords[0] != data.stop_coords[(data.stop_coords.size() + 1) / 2 - 1])
 			{
-				// Выводим вторую метку маршрута (конечную)
+				// Р’С‹РІРѕРґРёРј РІС‚РѕСЂСѓСЋ РјРµС‚РєСѓ РјР°СЂС€СЂСѓС‚Р° (РєРѕРЅРµС‡РЅСѓСЋ)
 				picture_.emplace_back(std::make_unique<TextLabel>(TextLabel{ sp(data.stop_coords[(data.stop_coords.size() + 1) / 2 - 1]),
 																  name,
 																  current_line_color,
@@ -192,26 +192,26 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 		}
 	}
 
-	// 2.3 Метки остановок (только те, через которые проходят маршруты)
-	//      (очередность - лексикографическое возрастание)
+	// 2.3 РњРµС‚РєРё РѕСЃС‚Р°РЅРѕРІРѕРє (С‚РѕР»СЊРєРѕ С‚Рµ, С‡РµСЂРµР· РєРѕС‚РѕСЂС‹Рµ РїСЂРѕС…РѕРґСЏС‚ РјР°СЂС€СЂСѓС‚С‹)
+	//      (РѕС‡РµСЂРµРґРЅРѕСЃС‚СЊ - Р»РµРєСЃРёРєРѕРіСЂР°С„РёС‡РµСЃРєРѕРµ РІРѕР·СЂР°СЃС‚Р°РЅРёРµ)
 	/*
 	for (const auto& stop : all_coords)
 	{
-		// формируем unique_ptr
+		// С„РѕСЂРјРёСЂСѓРµРј unique_ptr
 		picture_.emplace_back(std::make_unique<StopIcon>(StopIcon{ sp(stop), settings_}));
 	}
 	*/
 	for (const auto& stop : all_unique_stops)
 	{
-		// формируем unique_ptr
+		// С„РѕСЂРјРёСЂСѓРµРј unique_ptr
 		picture_.emplace_back(std::make_unique<StopIcon>(StopIcon{ sp(stop.second), settings_ }));
 	}
 
 
-	// 2.4 Метки остановок (очередность - лексикографическое возрастание)
+	// 2.4 РњРµС‚РєРё РѕСЃС‚Р°РЅРѕРІРѕРє (РѕС‡РµСЂРµРґРЅРѕСЃС‚СЊ - Р»РµРєСЃРёРєРѕРіСЂР°С„РёС‡РµСЃРєРѕРµ РІРѕР·СЂР°СЃС‚Р°РЅРёРµ)
 	for (const auto& stop : all_unique_stops)
 	{
-		// формируем unique_ptr
+		// С„РѕСЂРјРёСЂСѓРµРј unique_ptr
 		picture_.emplace_back(std::make_unique<TextLabel>(TextLabel{ sp(stop.second),
 														  std::string(stop.first),
 														  "black"s,
@@ -219,13 +219,13 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 														  true }));
 	}
 
-	// Вызываем Draw() по очереди для всех элеметов контейнера объектов Drawable, 
-	// формируя svg::Document
+	// Р’С‹Р·С‹РІР°РµРј Draw() РїРѕ РѕС‡РµСЂРµРґРё РґР»СЏ РІСЃРµС… СЌР»РµРјРµС‚РѕРІ РєРѕРЅС‚РµР№РЅРµСЂР° РѕР±СЉРµРєС‚РѕРІ Drawable, 
+	// С„РѕСЂРјРёСЂСѓСЏ svg::Document
 	svg::Document map;
 	DrawPicture(picture_, map);
-	// Тут можно добавить svg-примитивы прямо к map, если необходимо
+	// РўСѓС‚ РјРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ svg-РїСЂРёРјРёС‚РёРІС‹ РїСЂСЏРјРѕ Рє map, РµСЃР»Рё РЅРµРѕР±С…РѕРґРёРјРѕ
 
-	return map;  // Document.Render() будет вызывать уже метод-получатель
+	return map;  // Document.Render() Р±СѓРґРµС‚ РІС‹Р·С‹РІР°С‚СЊ СѓР¶Рµ РјРµС‚РѕРґ-РїРѕР»СѓС‡Р°С‚РµР»СЊ
 }
 
 const svg::Color MapRenderer::GetColorFromPallete()
