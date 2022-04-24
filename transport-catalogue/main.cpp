@@ -1,61 +1,33 @@
-// РЅР°РїРёС€РёС‚Рµ СЂРµС€РµРЅРёРµ СЃ РЅСѓР»СЏ
-// РєРѕРґ СЃРѕС…СЂР°РЅРёС‚Рµ РІ СЃРІРѕР№ git-СЂРµРїРѕР·РёС‚РѕСЂРёР№
+#include "request_handler.h"    // "фасад" транспортного справочника
+#include "json_reader.h"        // работа с данными в формате json
+#include "map_renderer.h"
 
-#include "geo.h"
-#include "input_reader.h"
-#include "transport_catalogue.h"
-#include "stat_reader.h"
-#include <iostream>         // for cout
+#include <iostream>             // для std::cin (isteam) и std::cout (osteam)
 
-#include <sstream>
+// Свойства конфигурации / Отладка / Аргументы команды:
+// "<input.json 1>stdout.txt"
 
 int main()
 {
-    using namespace std::string_literals;
-
-    transport_catalogue::TransportCatalogue tc;
-
-
     /*
-    // Р—Р°РєРѕРјРјРµРЅС‚РёСЂСѓР№С‚Рµ СЌС‚Рё 2 СЃС‚СЂРѕРєРё РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ С‚РµСЃС‚РѕРІРѕРіРѕ РІРІРѕРґР° РЅРёР¶Рµ
-    transport_catalogue::input_reader::ProcessInput(tc, std::cin);
-    transport_catalogue::stat_reader::ProcessRequests(std::cout, tc, std::cin);
-    */
+     * Примерная структура программы:
+     *
+     * Считать JSON из stdin
+     * Построить на его основе JSON базу данных транспортного справочника
+     * Выполнить запросы к справочнику, находящиеся в массиве "stat_requests", построив JSON-массив
+     * с ответами.
+     * Вывести в stdout ответы в виде JSON
+     */
 
+    // Создаем справочник
+    transport_catalogue::TransportCatalogue tc;
+    // Создаем рендерер карт
+    map_renderer::MapRenderer mr;
+    // Создаем обработчик запросов для справочника
+    transport_catalogue::RequestHandler rh(tc, mr);
+    // Вызываем обработчик JSON с требуемыми параметрами-ссылками
+    json_reader::ProcessJSON(tc, rh, mr, std::cin, std::cout);
 
-
-
-    // Р­РјСѓР»СЏС†РёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРіРѕ РІРІРѕРґР°
-    std::stringstream ss;
-    ss << "13\n"s;
-    ss << "Stop Tolstopaltsevo : 55.611087, 37.20829, 3900m to Marushkino\n"s;
-    ss << "Stop Marushkino : 55.595884, 37.209755, 9900m to Rasskazovka, 100m to Marushkino\n"s;
-    ss << "Bus 256 : Biryulyovo Zapadnoye > Biryusinka > Universam > Biryulyovo Tovarnaya > Biryulyovo Passazhirskaya > Biryulyovo Zapadnoye\n"s;
-    ss << "Bus 750: Tolstopaltsevo - Marushkino - Marushkino - Rasskazovka\n"s;
-    ss << "Stop Rasskazovka : 55.632761, 37.333324, 9500m to Marushkino\n"s;
-    ss << "Stop Biryulyovo Zapadnoye : 55.574371, 37.6517, 7500m to Rossoshanskaya ulitsa, 1800m to Biryusinka, 2400m to Universam\n"s;
-    ss << "Stop Biryusinka : 55.581065, 37.64839, 750m to Universam\n"s;
-    ss << "Stop Universam : 55.587655, 37.645687, 5600m to Rossoshanskaya ulitsa, 900m to Biryulyovo Tovarnaya\n"s;
-    ss << "Stop Biryulyovo Tovarnaya : 55.592028, 37.653656, 1300m to Biryulyovo Passazhirskaya\n"s;
-    ss << "Stop Biryulyovo Passazhirskaya : 55.580999, 37.659164, 1200m to Biryulyovo Zapadnoye\n"s;
-    ss << "Bus 828 : Biryulyovo Zapadnoye > Universam > Rossoshanskaya ulitsa > Biryulyovo Zapadnoye\n"s;
-    ss << "Stop Rossoshanskaya ulitsa : 55.595579, 37.605757\n"s;
-    ss << "Stop Prazhskaya : 55.611678, 37.603831\n"s;
-    // Р’РІРѕРґ РґР°РЅРЅС‹С… Р·Р°РІРµСЂС€РµРЅ. РџРµСЂРµРґР°РµРј РІРІРµРґРµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ РЅР° РѕР±СЂР°Р±РѕС‚РєСѓ (СЂР°Р·РґРµР»РµРЅРёРµ) РІ input_reader.h/.cpp
-    transport_catalogue::input_reader::ProcessInput(tc, ss);
-
-    // Р­РјСѓР»СЏС†РёСЏ Р·Р°РїСЂРѕСЃРѕРІ
-    std::stringstream ss_req;
-    ss_req << "6\n"s;
-    ss_req << "Bus 256\n"s;
-    ss_req << "Bus 750\n"s;
-    ss_req << "Bus 751\n"s;
-    ss_req << "Stop Samara\n"s;
-    ss_req << "Stop Prazhskaya\n"s;
-    ss_req << "Stop Biryulyovo Zapadnoye\n"s;
-    // РџРµСЂРµРґР°РµРј РґР°РЅРЅС‹Рµ Р·Р°РїСЂРѕСЃРѕРІ РЅР° РѕР±СЂР°Р±РѕС‚РєСѓ РІ stat_reader.h/.cpp
-    transport_catalogue::stat_reader::ProcessRequests(std::cout, tc, ss_req);
-
-
-    return 0;
+    //TODO Можно передать создание RequestHandler обработчику JSON, т.к. никому
+    //     кроме него RH не нужен.
 }

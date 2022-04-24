@@ -1,34 +1,31 @@
 #pragma once
 
-#include <cmath>
+#include <cstddef>
 
-namespace transport_catalogue::geo
+namespace geo
 {
 
-// Р Р°РґРёСѓСЃ Р—РµРјР»Рё, РјРµС‚СЂРѕРІ
+// Радиус Земли, метров
 const int EARTH_RADIUS = 6371000;
 
-// РЎС‚СЂСѓРєС‚СѓСЂР°, РѕРїСЂРµРґРµР»СЏСЋС‰Р°СЏ РїРѕР»РѕР¶РµРЅРёРµ С‚РѕС‡РєРё РІ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРµ
-// Рё РјРµС‚РѕРґС‹ СЂР°Р±РѕС‚С‹ СЃ РЅРµР№
+// Структура, определяющая положение точки в пространстве
+// и методы работы с ней
 struct Coordinates
 {
-    double lat;  // РЁРёСЂРѕС‚Р°
-    double lng;  // Р”РѕР»РіРѕС‚Р°
+    double lat;  // Широта
+    double lng;  // Долгота
     bool operator==(const Coordinates&) const;
     bool operator!=(const Coordinates&) const;
 };
 
-inline double ComputeDistance(Coordinates from, Coordinates to)
+class CoordinatesHasher
 {
-    using namespace std;
-    if (from == to)
-    {
-        return 0;
-    }
-    static const double dr = 3.1415926535 / 180.;
-    return acos(sin(from.lat * dr) * sin(to.lat * dr)
-                + cos(from.lat * dr) * cos(to.lat * dr) * cos(abs(from.lng - to.lng) * dr))
-        * EARTH_RADIUS;
-}
+public:
+    size_t operator()(const Coordinates&) const;
+};
 
-}
+// Функция рассчитывает расстояние между остановками по поверхности
+// земного шара
+double ComputeDistance(Coordinates from, Coordinates to);
+
+}  // namespace geo

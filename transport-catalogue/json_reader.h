@@ -1,0 +1,65 @@
+/*
+ * Здесь можно разместить код наполнения транспортного справочника данными из JSON,
+ * а также код обработки запросов к базе и формирование массива ответов в формате JSON
+ * 
+ * Назначение модуля: конвертация в/из json исходных данных, данных запросов и ответов 
+ * справочника на запросы. Вся работа с данными в формате json происходит в json_reader 
+ * (а также main.cpp - вывод в потоки), вне json_reader'а данные обрабатываются во 
+ * внутренних форматах транспортного справочника. Это позволяет добавить обработку данных 
+ * в другом формате (напримео, XML), не меняя request_handler / transport_catalogue
+ * 
+ *   request_handler - интерфейс ("Фасад) транспортного справочника (двоичные данные)
+ *       json_reader - интерфейс работы с данными формата json + добавление данных
+ */
+
+#pragma once
+
+#include "request_handler.h"        // "Фасад" транспортного каталога
+#include "json.h"
+#include "map_renderer.h"
+
+#include <iostream>                  // для std::cin (isteam) и std::cout (osteam)
+#include <sstream>                   // для ostringstream
+
+namespace json_reader
+{
+
+// ---------------Generic I/O-------------------------
+
+// Обрабатывает все данные формата JSON для указанного справочника, обработчика и потоков
+void ProcessJSON(transport_catalogue::TransportCatalogue&, transport_catalogue::RequestHandler&, 
+                 map_renderer::MapRenderer&, std::istream&, std::ostream&);
+// Считывает входные данные в формате JSON из потока и заполняет справочник
+//void LoadAsJSON(transport_catalogue::TransportCatalogue&, std::istream&);
+// Отправляет запросы к справочнику через RequestHandler и выводит JSON-ответ в поток
+//void QueryAsJSON(transport_catalogue::RequestHandler&, std::ostream&);
+//void QueryAsJSON(const json::Array&, transport_catalogue::RequestHandler&, std::ostream&);
+
+//------------------Process data-------------------
+
+// Функция добавляет данные в справочник, вызывая специализированные функции для разных типов данных
+void AddToDB(transport_catalogue::TransportCatalogue&, const json::Array&);
+// Функция добавляет данные об остановке (название, координаты)
+void AddStopData(transport_catalogue::TransportCatalogue&, const json::Dict&);
+// Функция добавляет данные об остановке (расстояния)
+void AddStopDistance(transport_catalogue::TransportCatalogue&, const json::Dict&);
+// Функция добавляет данные о маршруте
+void AddRouteData(transport_catalogue::TransportCatalogue&, const json::Dict&);
+
+//------------------Process settings-------------------
+
+const svg::Color ConvertColor_JSON2SVG(const json::Node&);
+void ReadRendererSettings(map_renderer::MapRenderer&, const json::Dict&);
+
+//--------------Processing requests-------------------
+
+// Функция обрабатывает запросы к справочнику, вызывая специализированные функции для разных типов запросов
+void ProcessQueriesJSON(transport_catalogue::RequestHandler&, const json::Array&, std::ostream&);
+// Функция обрабатывает запросы типа "Stop" (маршруты через остановку)
+const json::Node ProcessStopQuery(transport_catalogue::RequestHandler&, const json::Dict&);
+// Функция обрабатывает запросы типа "Bus"
+const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler&, const json::Dict&);
+// Функция обрабатывает запросы типа "Map" (текст svg-файла)
+const json::Node ProcessMapQuery(transport_catalogue::RequestHandler&, const json::Dict&);
+
+}
