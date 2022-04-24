@@ -5,8 +5,22 @@
 
 
 ### Использованные идеомы, технологии и элементы языка
-- Unordered mas/set
-- here will come more later, stay tuned
+- Unordered map/set
+- OOP: inheritance, abstract interfaces, final classes
+- std::variant and atd:optional
+- JSON load / output
+- SVG graph output
+- Curiously Recurring Template Pattern (CRTP)
+
+
+### STOP STOP STOP STOP STOP
+Information below is obsoleted due to large scale architechture changes. Please wait until instructions below will be updated.
+
+
+
+
+
+
 
 Формат ввода базы данных
 ========================
