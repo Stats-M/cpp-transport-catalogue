@@ -7,6 +7,7 @@
 ### Использованные идеомы, технологии и элементы языка
 - Unordered map/set
 - OOP: inheritance, abstract interfaces, final classes
+- STL smart pointers
 - std::variant and std:optional
 - JSON load / output
 - SVG graph output
