@@ -12,17 +12,11 @@
 - JSON load / output
 - SVG graph output
 - Curiously Recurring Template Pattern (CRTP)
+- Facade design pattern
 - C++17
-
 
 # STOP STOP STOP STOP STOP
 Information below is obsolete due to large scale architechture changes. Please wait until instructions below will be updated.
-
-
-
-
-
-
 
 Формат ввода базы данных [obsolete]
 ========================
