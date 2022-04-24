@@ -19,16 +19,16 @@ using Array = std::vector<Node>;
 //using Number = std::variant<int, double>;
 using JSON_node = std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string>;
 
-// Эта ошибка должна выбрасываться при ошибках парсинга JSON
+// Р­С‚Р° РѕС€РёР±РєР° РґРѕР»Р¶РЅР° РІС‹Р±СЂР°СЃС‹РІР°С‚СЊСЃСЏ РїСЂРё РѕС€РёР±РєР°С… РїР°СЂСЃРёРЅРіР° JSON
 class ParsingError : public std::runtime_error
 {
 public:
     using runtime_error::runtime_error;
 };
 
-// Класс узла JSON документа. Дочерние узлы являются значениями в 
-// словаре родительского узла, т.е. достаточно 1 узла в документе 
-// чтобы хранить в нем любое количество дочерних узлов
+// РљР»Р°СЃСЃ СѓР·Р»Р° JSON РґРѕРєСѓРјРµРЅС‚Р°. Р”РѕС‡РµСЂРЅРёРµ СѓР·Р»С‹ СЏРІР»СЏСЋС‚СЃСЏ Р·РЅР°С‡РµРЅРёСЏРјРё РІ 
+// СЃР»РѕРІР°СЂРµ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ СѓР·Р»Р°, С‚.Рµ. РґРѕСЃС‚Р°С‚РѕС‡РЅРѕ 1 СѓР·Р»Р° РІ РґРѕРєСѓРјРµРЅС‚Рµ 
+// С‡С‚РѕР±С‹ С…СЂР°РЅРёС‚СЊ РІ РЅРµРј Р»СЋР±РѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РґРѕС‡РµСЂРЅРёС… СѓР·Р»РѕРІ
 class Node
 {
 public:
@@ -40,14 +40,14 @@ public:
     Node(T value) : json_node_var_(std::move(value))
     {}
 
-    bool IsNull() const;        // В json_node_var_ хранится nullptr?
-    bool IsInt() const;         // В json_node_var_ хранится int?
-    bool IsDouble() const;      // В json_node_var_ хранится int или double?
-    bool IsPureDouble() const;  // В json_node_var_ хранится строго double?
-    bool IsString() const;      // В json_node_var_ хранится string?
-    bool IsBool() const;        // В json_node_var_ хранится bool?
-    bool IsArray() const;       // В json_node_var_ хранится vector?
-    bool IsMap() const;         // В json_node_var_ хранится map?
+    bool IsNull() const;        // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ nullptr?
+    bool IsInt() const;         // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ int?
+    bool IsDouble() const;      // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ int РёР»Рё double?
+    bool IsPureDouble() const;  // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ СЃС‚СЂРѕРіРѕ double?
+    bool IsString() const;      // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ string?
+    bool IsBool() const;        // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ bool?
+    bool IsArray() const;       // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ vector?
+    bool IsMap() const;         // Р’ json_node_var_ С…СЂР°РЅРёС‚СЃСЏ map?
 
     const Array& AsArray() const;
     const Dict& AsMap() const;
@@ -58,51 +58,51 @@ public:
 
     const JSON_node& GetValue() const;
 
-    // Перегруженный сокращенный оператор сравнения для Node
+    // РџРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ СЃРѕРєСЂР°С‰РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ СЃСЂР°РІРЅРµРЅРёСЏ РґР»СЏ Node
     bool operator==(const Node& rhs) const;
-    // Перегруженный сокращенный оператор неравенства для Node
+    // РџРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ СЃРѕРєСЂР°С‰РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РЅРµСЂР°РІРµРЅСЃС‚РІР° РґР»СЏ Node
     bool operator!=(const Node& rhs) const;
 private:
     JSON_node json_node_var_;    // std::variant
 };
 
-// Класс JSON документа без методов манипуляции им (реализованы внешними функциями)
+// РљР»Р°СЃСЃ JSON РґРѕРєСѓРјРµРЅС‚Р° Р±РµР· РјРµС‚РѕРґРѕРІ РјР°РЅРёРїСѓР»СЏС†РёРё РёРј (СЂРµР°Р»РёР·РѕРІР°РЅС‹ РІРЅРµС€РЅРёРјРё С„СѓРЅРєС†РёСЏРјРё)
 class Document
 {
 public:
-    // Явный конструктор Document на основе корневого узла Node
+    // РЇРІРЅС‹Р№ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Document РЅР° РѕСЃРЅРѕРІРµ РєРѕСЂРЅРµРІРѕРіРѕ СѓР·Р»Р° Node
     explicit Document(Node root);
 
     const Node& GetRoot() const;
 
-    // Перегруженный сокращенный оператор сравнения для Document
+    // РџРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ СЃРѕРєСЂР°С‰РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ СЃСЂР°РІРЅРµРЅРёСЏ РґР»СЏ Document
     bool operator==(const Document& rhs) const;
-    // Перегруженный сокращенный оператор неравенства для Document
+    // РџРµСЂРµРіСЂСѓР¶РµРЅРЅС‹Р№ СЃРѕРєСЂР°С‰РµРЅРЅС‹Р№ РѕРїРµСЂР°С‚РѕСЂ РЅРµСЂР°РІРµРЅСЃС‚РІР° РґР»СЏ Document
     bool operator!=(const Document& rhs) const;
 private:
-    // Корневой узел. Является словарем для дочерних узлов при их наличии
+    // РљРѕСЂРЅРµРІРѕР№ СѓР·РµР». РЇРІР»СЏРµС‚СЃСЏ СЃР»РѕРІР°СЂРµРј РґР»СЏ РґРѕС‡РµСЂРЅРёС… СѓР·Р»РѕРІ РїСЂРё РёС… РЅР°Р»РёС‡РёРё
     Node root_;
 };
 
-// Загружает и возвращает JSON документ из потока istream
+// Р—Р°РіСЂСѓР¶Р°РµС‚ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ JSON РґРѕРєСѓРјРµРЅС‚ РёР· РїРѕС‚РѕРєР° istream
 Document Load(std::istream& input);
 
-// Выводит JSON документ в поток ostream, начиная с корневого узла
+// Р’С‹РІРѕРґРёС‚ JSON РґРѕРєСѓРјРµРЅС‚ РІ РїРѕС‚РѕРє ostream, РЅР°С‡РёРЅР°СЏ СЃ РєРѕСЂРЅРµРІРѕРіРѕ СѓР·Р»Р°
 void Print(const Document& doc, std::ostream& output);
 
-// Таблица спецсимволов для сохранения строк в файл (поток, печать...)
+// РўР°Р±Р»РёС†Р° СЃРїРµС†СЃРёРјРІРѕР»РѕРІ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃС‚СЂРѕРє РІ С„Р°Р№Р» (РїРѕС‚РѕРє, РїРµС‡Р°С‚СЊ...)
 static std::unordered_map<char, std::string> esc_symbols_save = {
     {'\\', std::string("\\\\")},
     {'"', std::string("\\\"")},
     {'\n', std::string("\\n")},
     {'\r',std::string("\\r")},
-//    {'/', std::string("\\/")},  отключено, не требуется по заданию
+//    {'/', std::string("\\/")},  РѕС‚РєР»СЋС‡РµРЅРѕ, РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ РїРѕ Р·Р°РґР°РЅРёСЋ
     {'\b',std::string("\\b")},
     {'\f',std::string("\\f")}
-    //{'\t',std::string("\\t")} - при печати это не нужно экранировать
+    //{'\t',std::string("\\t")} - РїСЂРё РїРµС‡Р°С‚Рё СЌС‚Рѕ РЅРµ РЅСѓР¶РЅРѕ СЌРєСЂР°РЅРёСЂРѕРІР°С‚СЊ
 };
 
-// Структура для использования с паттерном Посетитель 
+// РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ СЃ РїР°С‚С‚РµСЂРЅРѕРј РџРѕСЃРµС‚РёС‚РµР»СЊ 
 struct OstreamSolutionPrinter
 {
     std::ostream& out;
@@ -110,7 +110,7 @@ struct OstreamSolutionPrinter
     void operator()(std::nullptr_t) const
     {
         using namespace std::literals;
-        out << "null"sv;  // endl не выводим, т.к. символ /n добавляется к выводу
+        out << "null"sv;  // endl РЅРµ РІС‹РІРѕРґРёРј, С‚.Рє. СЃРёРјРІРѕР» /n РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Рє РІС‹РІРѕРґСѓ
     }
     void operator()(Array array) const
     {
@@ -150,59 +150,59 @@ struct OstreamSolutionPrinter
         using namespace std::literals;
         if (value)
         {
-            out << "true"sv;  // endl не выводим, т.к. символ /n добавляется к выводу
+            out << "true"sv;  // endl РЅРµ РІС‹РІРѕРґРёРј, С‚.Рє. СЃРёРјРІРѕР» /n РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Рє РІС‹РІРѕРґСѓ
         }
         else
         {
-            out << "false"sv;  // endl не выводим, т.к. символ /n добавляется к выводу
+            out << "false"sv;  // endl РЅРµ РІС‹РІРѕРґРёРј, С‚.Рє. СЃРёРјРІРѕР» /n РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Рє РІС‹РІРѕРґСѓ
         }
     }
     void operator()(int num) const
     {
-        out << num;  // endl не выводим, т.к. символ /n добавляется к выводу
+        out << num;  // endl РЅРµ РІС‹РІРѕРґРёРј, С‚.Рє. СЃРёРјРІРѕР» /n РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Рє РІС‹РІРѕРґСѓ
     }
     void operator()(double num) const
     {
-        out << num;  // endl не выводим, т.к. символ /n добавляется к выводу
+        out << num;  // endl РЅРµ РІС‹РІРѕРґРёРј, С‚.Рє. СЃРёРјРІРѕР» /n РґРѕР±Р°РІР»СЏРµС‚СЃСЏ Рє РІС‹РІРѕРґСѓ
     }
     void operator()(std::string line) const
     {
         using namespace std::literals;
 
-        /* Реализация через цикл for each
+        /* Р РµР°Р»РёР·Р°С†РёСЏ С‡РµСЂРµР· С†РёРєР» for each
         out << "\""sv;
-        // Посимвольная обработка строки
+        // РџРѕСЃРёРјРІРѕР»СЊРЅР°СЏ РѕР±СЂР°Р±РѕС‚РєР° СЃС‚СЂРѕРєРё
         for (const auto& ch : line)
         {
             if (esc_symbols_save.find(ch) != esc_symbols_save.end())
             {
-                // Считан спецсимвол. Выводим его
+                // РЎС‡РёС‚Р°РЅ СЃРїРµС†СЃРёРјРІРѕР». Р’С‹РІРѕРґРёРј РµРіРѕ
                 out << esc_symbols_save[ch];
             }
             else
             {
-                // Обычный символ, выводим как есть
+                // РћР±С‹С‡РЅС‹Р№ СЃРёРјРІРѕР», РІС‹РІРѕРґРёРј РєР°Рє РµСЃС‚СЊ
                 out << ch;
             }
         }
         out << "\""sv;
         */
 
-        // Реализация через чтение потока
+        // Р РµР°Р»РёР·Р°С†РёСЏ С‡РµСЂРµР· С‡С‚РµРЅРёРµ РїРѕС‚РѕРєР°
         std::istringstream strm(line);
         out << "\""sv;
-        // Посимвольная обработка строки
+        // РџРѕСЃРёРјРІРѕР»СЊРЅР°СЏ РѕР±СЂР°Р±РѕС‚РєР° СЃС‚СЂРѕРєРё
         char ch;
         while (strm.get(ch))
         {
             if (esc_symbols_save.find(ch) != esc_symbols_save.end())
             {
-                // Считан спецсимвол. Выводим его
+                // РЎС‡РёС‚Р°РЅ СЃРїРµС†СЃРёРјРІРѕР». Р’С‹РІРѕРґРёРј РµРіРѕ
                 out << esc_symbols_save[ch];
             }
             else
             {
-                // Обычный символ, выводим как есть
+                // РћР±С‹С‡РЅС‹Р№ СЃРёРјРІРѕР», РІС‹РІРѕРґРёРј РєР°Рє РµСЃС‚СЊ
                 out << ch;
             }
         }
