@@ -16,7 +16,7 @@
 
 
 # STOP STOP STOP STOP STOP
-Information below is obsoleted due to large scale architechture changes. Please wait until instructions below will be updated.
+Information below is obsolete due to large scale architechture changes. Please wait until instructions below will be updated.
 
 
 
