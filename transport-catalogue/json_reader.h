@@ -1,7 +1,4 @@
 /*
- * Здесь можно разместить код наполнения транспортного справочника данными из JSON,
- * а также код обработки запросов к базе и формирование массива ответов в формате JSON
- * 
  * Назначение модуля: конвертация в/из json исходных данных, данных запросов и ответов 
  * справочника на запросы. Вся работа с данными в формате json происходит в json_reader 
  * (а также main.cpp - вывод в потоки), вне json_reader'а данные обрабатываются во 
@@ -20,6 +17,7 @@
 
 #include <iostream>                  // для std::cin (isteam) и std::cout (osteam)
 #include <sstream>                   // для ostringstream
+#include <vector>                    // для вектора этапов обработки входящих данных
 
 namespace json_reader
 {
@@ -27,15 +25,15 @@ namespace json_reader
 // ---------------Generic I/O-------------------------
 
 // Обрабатывает все данные формата JSON для указанного справочника, обработчика и потоков
-void ProcessJSON(transport_catalogue::TransportCatalogue&, transport_catalogue::RequestHandler&, 
-                 map_renderer::MapRenderer&, std::istream&, std::ostream&);
+void ProcessJSON(transport_catalogue::TransportCatalogue&, map_renderer::MapRenderer&, 
+                 std::istream&, std::ostream&);
 // Считывает входные данные в формате JSON из потока и заполняет справочник
 //void LoadAsJSON(transport_catalogue::TransportCatalogue&, std::istream&);
 // Отправляет запросы к справочнику через RequestHandler и выводит JSON-ответ в поток
 //void QueryAsJSON(transport_catalogue::RequestHandler&, std::ostream&);
 //void QueryAsJSON(const json::Array&, transport_catalogue::RequestHandler&, std::ostream&);
 
-//------------------Process data-------------------
+//------------Process json input data section-------------------
 
 // Функция добавляет данные в справочник, вызывая специализированные функции для разных типов данных
 void AddToDB(transport_catalogue::TransportCatalogue&, const json::Array&);
@@ -48,13 +46,13 @@ void AddRouteData(transport_catalogue::TransportCatalogue&, const json::Dict&);
 
 //------------------Process settings-------------------
 
-const svg::Color ConvertColor_JSON2SVG(const json::Node&);
+const svg::Color ConvertJSONColorToSVG(const json::Node&);
 void ReadRendererSettings(map_renderer::MapRenderer&, const json::Dict&);
 
-//--------------Processing requests-------------------
+//--------------Requests section parsing-------------------
 
-// Функция обрабатывает запросы к справочнику, вызывая специализированные функции для разных типов запросов
-void ProcessQueriesJSON(transport_catalogue::RequestHandler&, const json::Array&, std::ostream&);
+// Функция осуществляет разбор секции запросов JSON, назначая соответствующий обработчик
+void ParseRawJSONQueries(transport_catalogue::RequestHandler&, const json::Array&, std::ostream&);
 // Функция обрабатывает запросы типа "Stop" (маршруты через остановку)
 const json::Node ProcessStopQuery(transport_catalogue::RequestHandler&, const json::Dict&);
 // Функция обрабатывает запросы типа "Bus"
