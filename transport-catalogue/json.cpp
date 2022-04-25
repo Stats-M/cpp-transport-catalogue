@@ -52,19 +52,6 @@ Node LoadArray(istream& input)
     return Node(result);
 }
 
-/* OBSOLETE CODE - v1 JSON
-Node LoadInt(istream& input)
-{
-    int result = 0;
-    while (isdigit(input.peek()))
-    {
-        result *= 10;
-        result += input.get() - '0';
-    }
-    return Node(result);
-}
-*/
-
 // Функция считывает данные типа string
 Node LoadString(istream& input)
 {
@@ -475,7 +462,7 @@ const std::string& Node::AsString() const
     }
 }
 
-const JSON_node& Node::GetValue() const
+const JSONNode& Node::GetValue() const
 {
     return json_node_var_;
 }
