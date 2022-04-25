@@ -1,11 +1,11 @@
 /*
- * ¬ ˝ÚÓÏ Ù‡ÈÎÂ ‚˚ ÏÓÊÂÚÂ ‡ÁÏÂÒÚËÚ¸ ÍÎ‡ÒÒ˚/ÒÚÛÍÚÛ˚, ÍÓÚÓ˚Â ˇ‚Îˇ˛ÚÒˇ ˜‡ÒÚ¸˛ ÔÂ‰ÏÂÚÌÓÈ Ó·Î‡ÒÚË
- * (domain) ‚‡¯Â„Ó ÔËÎÓÊÂÌËˇ Ë ÌÂ Á‡‚ËÒˇÚ ÓÚ Ú‡ÌÒÔÓÚÌÓ„Ó ÒÔ‡‚Ó˜ÌËÍ‡. Õ‡ÔËÏÂ ¿‚ÚÓ·ÛÒÌ˚Â
- * Ï‡¯ÛÚ˚ Ë ŒÒÚ‡ÌÓ‚ÍË.
+ * –í —ç—Ç–æ–º —Ñ–∞–π–ª–µ –≤—ã –º–æ–∂–µ—Ç–µ —Ä–∞–∑–º–µ—Å—Ç–∏—Ç—å –∫–ª–∞—Å—Å—ã/—Å—Ç—Ä—É–∫—Ç—É—Ä—ã, –∫–æ—Ç–æ—Ä—ã–µ —è–≤–ª—è—é—Ç—Å—è —á–∞—Å—Ç—å—é –ø—Ä–µ–¥–º–µ—Ç–Ω–æ–π –æ–±–ª–∞—Å—Ç–∏
+ * (domain) –≤–∞—à–µ–≥–æ –ø—Ä–∏–ª–æ–∂–µ–Ω–∏—è –∏ –Ω–µ –∑–∞–≤–∏—Å—è—Ç –æ—Ç —Ç—Ä–∞–Ω—Å–ø–æ—Ä—Ç–Ω–æ–≥–æ —Å–ø—Ä–∞–≤–æ—á–Ω–∏–∫–∞. –ù–∞–ø—Ä–∏–º–µ—Ä –ê–≤—Ç–æ–±—É—Å–Ω—ã–µ
+ * –º–∞—Ä—à—Ä—É—Ç—ã –∏ –û—Å—Ç–∞–Ω–æ–≤–∫–∏.
  *
- * »ı ÏÓÊÌÓ ·˚ÎÓ ·˚ ‡ÁÏÂÒÚËÚ¸ Ë ‚ transport_catalogue.h, Ó‰Ì‡ÍÓ ‚˚ÌÂÒÂÌËÂ Ëı ‚ ÓÚ‰ÂÎ¸Ì˚È
- * Á‡„ÓÎÓ‚Ó˜Ì˚È Ù‡ÈÎ ÏÓÊÂÚ ÓÍ‡Á‡Ú¸Òˇ ÔÓÎÂÁÌ˚Ï, ÍÓ„‰‡ ‰ÂÎÓ ‰ÓÈ‰∏Ú ‰Ó ‚ËÁÛ‡ÎËÁ‡ˆËË Í‡Ú˚ Ï‡¯ÛÚÓ‚:
- * ‚ËÁÛ‡ÎËÁ‡ÚÓ Í‡Ú˚ (map_renderer) ÏÓÊÌÓ ·Û‰ÂÚ Ò‰ÂÎ‡Ú¸ ÌÂÁ‡‚ËÒˇ˘ËÏ ÓÚ Ú‡ÌÒÔÓÚÌÓ„Ó ÒÔ‡‚Ó˜ÌËÍ‡.
+ * –ò—Ö –º–æ–∂–Ω–æ –±—ã–ª–æ –±—ã —Ä–∞–∑–º–µ—Å—Ç–∏—Ç—å –∏ –≤ transport_catalogue.h, –æ–¥–Ω–∞–∫–æ –≤—ã–Ω–µ—Å–µ–Ω–∏–µ –∏—Ö –≤ –æ—Ç–¥–µ–ª—å–Ω—ã–π
+ * –∑–∞–≥–æ–ª–æ–≤–æ—á–Ω—ã–π —Ñ–∞–π–ª –º–æ–∂–µ—Ç –æ–∫–∞–∑–∞—Ç—å—Å—è –ø–æ–ª–µ–∑–Ω—ã–º, –∫–æ–≥–¥–∞ –¥–µ–ª–æ –¥–æ–π–¥—ë—Ç –¥–æ –≤–∏–∑—É–∞–ª–∏–∑–∞—Ü–∏–∏ –∫–∞—Ä—Ç—ã –º–∞—Ä—à—Ä—É—Ç–æ–≤:
+ * –≤–∏–∑—É–∞–ª–∏–∑–∞—Ç–æ—Ä –∫–∞—Ä—Ç—ã (map_renderer) –º–æ–∂–Ω–æ –±—É–¥–µ—Ç —Å–¥–µ–ª–∞—Ç—å –Ω–µ–∑–∞–≤–∏—Å—è—â–∏–º –æ—Ç —Ç—Ä–∞–Ω—Å–ø–æ—Ä—Ç–Ω–æ–≥–æ —Å–ø—Ä–∞–≤–æ—á–Ω–∏–∫–∞.
  */
 
 #include "domain.h"
@@ -15,9 +15,9 @@ namespace transport_catalogue
 
 // ---------------- struct Stop ----------------------
 
-Stop::Stop(StopPtr ptr) :
-	name(ptr->name), 
-	coords(ptr->coords)
+Stop::Stop(StopPtr other_stop_ptr) :
+	name(other_stop_ptr->name),
+	coords(other_stop_ptr->coords)
 {}
 
 Stop::Stop(const std::string_view stop_name, const double lat, const double lng) : 
@@ -27,14 +27,37 @@ Stop::Stop(const std::string_view stop_name, const double lat, const double lng)
 
 // ---------------- struct Route ----------------------
 
-Route::Route(RoutePtr ptr) :
-    route_name(ptr->route_name), 
-	stops(ptr->stops), 
-	unique_stops_qty(ptr->unique_stops_qty), 
-	geo_route_length(ptr->geo_route_length), 
-	meters_route_length(ptr->meters_route_length), 
-	curvature(ptr->curvature), 
-	is_circular(ptr->is_circular)
+Route::Route(RoutePtr other_stop_ptr) :
+    route_name(other_stop_ptr->route_name),
+	stops(other_stop_ptr->stops),
+	unique_stops_qty(other_stop_ptr->unique_stops_qty),
+	geo_route_length(other_stop_ptr->geo_route_length),
+	meters_route_length(other_stop_ptr->meters_route_length),
+	curvature(other_stop_ptr->curvature),
+	is_circular(other_stop_ptr->is_circular)
 {}
+
+// ----------- class PairPointersHasher --------------
+
+std::size_t  PairPointersHasher::operator()(const std::pair<StopPtr, StopPtr> pair_of_pointers) const noexcept
+{
+	//auto ptr1 = static_cast<const void*>(pair_of_pointers.first);
+	//auto ptr2 = static_cast<const void*>(pair_of_pointers.second);
+	//return hasher_(ptr1) * 37 + hasher_(ptr2);
+
+	return hasher_(static_cast<const void*>(pair_of_pointers.first)) * 37
+		+ hasher_(static_cast<const void*>(pair_of_pointers.second));
+
+	/* –ö–æ–¥ —Ö—ç—à–µ—Ä–∞ –¥–ª—è —à–∞–±–ª–æ–Ω–Ω–æ–≥–æ –≤–∞—Ä–∏–∞–Ω—Ç–∞ PairPointersHasher<T==Stop>
+	// –°–Ω–∏–º–∞–µ–º –∫–æ–Ω—Å—Ç–∞–Ω—Ç–Ω–æ—Å—Ç—å (–Ω–µ–ª—å–∑—è –ø—Ä–∏–≤–æ–¥–∏—Ç—å —Ç–∏–ø –¥–ª—è –∫–æ–Ω—Å—Ç–∞–Ω—Ç–Ω–æ–≥–æ —É–∫–∞–∑–∞—Ç–µ–ª—è)
+	T* ptr1 = const_cast<T*>(pair_of_pointers.first);
+	T* ptr2 = const_cast<T*>(pair_of_pointers.second);
+	// –ü—Ä–∏–≤–µ–¥–µ–Ω–∏–µ –Ω–µ—Å–æ–≤–º–µ—Å—Ç–∏–º—ã—Ö —Ç–∏–ø–æ–≤
+	std::uintptr_t np_ptr1 = reinterpret_cast<std::uintptr_t>(ptr1);
+	std::uintptr_t np_ptr2 = reinterpret_cast<std::uintptr_t>(ptr2);
+	return hasher_(np_ptr1) * 37 + hasher_(np_ptr2);
+	*/
+}
+
 
 } // namespace transport_catalogue
