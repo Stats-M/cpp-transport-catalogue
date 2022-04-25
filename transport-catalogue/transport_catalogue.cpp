@@ -222,10 +222,9 @@ StopStatPtr TransportCatalogue::GetBusesForStopInfo(const std::string_view stop_
 		return nullptr;
 	}
 
-	// TODO Улучшить метод, добавив обратный словарь stops_to_buses_map_
+	// TODO Улучшить метод, добавив обратный словарь stops_to_buses_map_ (если потребуется)
 
-	//std::vector<std::string_view> found_buses_sv;   // временный вектор найденных результатов
-	std::set<std::string_view> found_buses_sv;   // временное пустое множество найденных результатов
+	std::set<std::string_view> found_buses_sv;   // временное пустое множество найденных результатов (лексикографическая сортировка)
 	for (const auto& bus : all_buses_map_)
 	{
 		// Ищем в векторе остановок для текущего элемента цикла bus хоть 1 совпадение с заданной остановкой
