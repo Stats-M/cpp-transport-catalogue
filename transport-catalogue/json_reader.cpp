@@ -1,14 +1,11 @@
 /*
- * Здесь можно разместить код наполнения транспортного справочника данными из JSON,
- * а также код обработки запросов к базе и формирование массива ответов в формате JSON
- *
  * Назначение модуля: конвертация в/из json исходных данных, данных запросов и ответов
  * справочника на запросы. Вся работа с данными в формате json происходит в json_reader
  * (а также main.cpp - вывод в потоки), вне json_reader'а данные обрабатываются во
  * внутренних форматах транспортного справочника. Это позволяет добавить обработку данных
  * в другом формате (напримео, XML), не меняя request_handler / transport_catalogue
  *
- *   request_handler - интерфейс ("Фасад) транспортного справочника (двоичные данные)
+ *   request_handler - интерфейс ("Фасад") транспортного справочника (двоичные данные)
  *       json_reader - интерфейс работы с данными формата json
  */
 
@@ -20,15 +17,18 @@ namespace json_reader
 // ---------------Generic I/O-------------------------
 
 void ProcessJSON(transport_catalogue::TransportCatalogue& tc, 
-				 transport_catalogue::RequestHandler& rh,
 				 map_renderer::MapRenderer& mr,
 				 std::istream& input, std::ostream& output)
 {
-	// Временно отключено. Нужно делать static документ или класс чтобы можно было разделить
+	// Временно отключено и перенесено сюда.
+	// Нужно делать static документ или класс чтобы можно было разделить
 	//LoadAsJSON(tc, input);     // Загружаем исходные данные в static переменную
 	//QueryAsJSON(rh, output);  // Отправляем запросы к справочнику и выводим результат
 
 	using namespace std::literals;
+
+	// Создаем обработчик запросов для справочника
+	transport_catalogue::RequestHandler rh(tc, mr);
 
 	const json::Document j_doc = json::Load(input);
 	// Корневой узел JSON документа - словарь
@@ -55,40 +55,9 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 	{
 		// Есть запросы к справочнику. Формат данных - массив (вектор)
 		//QueryAsJSON(stat_requests_it->second.AsArray(), rh, output);
-		ProcessQueriesJSON(rh, stat_requests_it->second.AsArray(), output);
+		ParseRawJSONQueries(rh, stat_requests_it->second.AsArray(), output);
 	}
 }
-
-/* Временно отключено. Нужно делать static документ или менять архитектуру модуля 
-*  чтобы можно было разделить обработку наполнения справочника и запросов к нему.
-void LoadAsJSON(transport_catalogue::TransportCatalogue& tc, std::istream& input)
-{
-	const json::Document j_doc = json::Load(input);
-	// Корневой узел JSON документа - словарь
-	const json::Dict j_dict = j_doc.GetRoot().AsMap();
-	// Находим точку начала секции входных данных в словаре
-	const auto base_requests_it = j_dict.find("base_requests");
-	if (base_requests_it != j_dict.cend())
-	{
-		// Есть входные данные. Формат данных - массив (вектор)
-		AddToDB(tc, base_requests_it->second.AsArray());
-	}
-
-	// Находим точку начала секции запросов в словаре
-	const auto stat_requests_it = j_dict.find("stat_requests");
-	if (stat_requests_it != j_dict.cend())
-	{
-		// Есть запросы к справочнику. Формат данных - массив (вектор)
-		//ProcessAsJSON(stat_requests_it->second.AsArray(), rh, output);
-	}
-
-}
-
-void QueryAsJSON(const json::Array& j_arr, transport_catalogue::RequestHandler& rh, std::ostream& output)
-{
-
-}
-*/
 
 //------------------Process data-------------------
 
@@ -98,47 +67,40 @@ void AddToDB(transport_catalogue::TransportCatalogue& tc, const json::Array& j_a
 
 	using namespace std::literals;
 
-	// Проход 1. Заносим данные о названиях и координатах остановок
-	for (const auto& element : j_arr)
-	{
-		// Ищем ключ "type", хранящий тип записи
-		const auto request_type = element.AsMap().find("type"s);
-		if (request_type != element.AsMap().end())
-		{
-			if (request_type->second.AsString() == "Stop"s)
-			{
-				// Это остановка (тип записи - словарь). Обрабатываем название и координаты 
-				AddStopData(tc, element.AsMap());
-			}
-		}
-	}
+	// Вектор значений словаря, обрабатываемых в соответствующем проходе обработки входных данных,
+	// т.е. в 0-й проход проверяем на =="Stop", в 1й на =="Stop", во 2й на =="Bus"
+	static std::vector<std::string> stages = { "Stop"s, "Stop"s, "Bus"s };
 
-	// Проход 2. Заносим данные о расстояниях между остановками
-	for (const auto& element : j_arr)
+	// Обработка j_arr в несколько проходов в строго определенной последовательности.
+	// В каждом проходе обрабатывается своя отдельная группа данных
+	for (size_t i = 0; i < stages.size(); ++i)
 	{
-		// Ищем ключ "type", хранящий тип записи
-		const auto request_type = element.AsMap().find("type"s);
-		if (request_type != element.AsMap().end())
+		for (const auto& element : j_arr)
 		{
-			if (request_type->second.AsString() == "Stop"s)
+			// Ищем ключ "type", хранящий тип записи
+			const auto request_type = element.AsMap().find("type"s);
+			if (request_type != element.AsMap().end())
 			{
-				// Это остановка (тип записи - словарь). Обрабатываем расстояния 
-				AddStopDistance(tc, element.AsMap());
-			}
-		}
-	}
-
-	// Проход 3. Заносим данные о маршрутах
-	for (const auto& element : j_arr)
-	{
-		// Ищем ключ "type", хранящий тип записи
-		const auto request_type = element.AsMap().find("type"s);
-		if (request_type != element.AsMap().end())
-		{
-			if (request_type->second.AsString() == "Bus"s)
-			{
-				// Это маршрут (тип записи - словарь). Обрабатываем полностью
-				AddRouteData(tc, element.AsMap());
+				// Для каждой пары проверяем соответствие Value i-му значению вектора stages
+				// При соответствии вызываем отдельную для каждого прохода функцию обработки
+				if (request_type->second.AsString() == stages[i])
+				{
+					switch (i)
+					{
+					case 0:
+						// Это остановка (тип записи - словарь). Обрабатываем название и координаты 
+						AddStopData(tc, element.AsMap());
+						break;
+					case 1:
+						// Это остановка (тип записи - словарь). Обрабатываем расстояния 
+						AddStopDistance(tc, element.AsMap());
+						break;
+					case 2:
+						// Это маршрут (тип записи - словарь). Обрабатываем полностью
+						AddRouteData(tc, element.AsMap());
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -203,7 +165,7 @@ void AddRouteData(transport_catalogue::TransportCatalogue& tc, const json::Dict&
 
 //------------------Process settings-------------------
 
-const svg::Color ConvertColor_JSON2SVG(const json::Node& color)
+const svg::Color ConvertJSONColorToSVG(const json::Node& color)
 {
 	if (color.IsString())
 	{
@@ -253,12 +215,12 @@ void ReadRendererSettings(map_renderer::MapRenderer& mr, const json::Dict& j_dic
 	new_settings.bus_label_offset = { j_dict.at("bus_label_offset").AsArray()[0].AsDouble(), j_dict.at("bus_label_offset").AsArray()[1].AsDouble() };
 	new_settings.stop_label_font_size = j_dict.at("stop_label_font_size").AsInt();
 	new_settings.stop_label_offset = { j_dict.at("stop_label_offset").AsArray()[0].AsDouble(), j_dict.at("stop_label_offset").AsArray()[1].AsDouble() };
-	new_settings.underlayer_color = ConvertColor_JSON2SVG(j_dict.at("underlayer_color"));
+	new_settings.underlayer_color = ConvertJSONColorToSVG(j_dict.at("underlayer_color"));
 	new_settings.underlayer_width = j_dict.at("underlayer_width").AsDouble();
 	new_settings.color_palette.clear();    // Очистим массив от дефолтных элементов
 	for (const auto& color : j_dict.at("color_palette").AsArray())
 	{
-		new_settings.color_palette.emplace_back(ConvertColor_JSON2SVG(color));
+		new_settings.color_palette.emplace_back(ConvertJSONColorToSVG(color));
 	}
 
 	// Применяем новые настройки рендера
@@ -267,7 +229,7 @@ void ReadRendererSettings(map_renderer::MapRenderer& mr, const json::Dict& j_dic
 
 //--------------Processing requests-------------------
 
-void ProcessQueriesJSON(transport_catalogue::RequestHandler& rh, const json::Array& j_arr, std::ostream& output)
+void ParseRawJSONQueries(transport_catalogue::RequestHandler& rh, const json::Array& j_arr, std::ostream& output)
 {
 	using namespace std::literals;
 
