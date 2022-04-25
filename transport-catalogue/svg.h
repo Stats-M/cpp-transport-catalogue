@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <optional>
 #include <variant>
+#include <unordered_map>   // для таблицы замены спецсимволов
 
 namespace svg
 {
