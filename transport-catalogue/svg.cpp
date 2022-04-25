@@ -158,86 +158,34 @@ Text& Text::SetData(std::string data)
     return *this;
 }
 
+// Таблица спецсимволов для замены в xml/html файлах
+static std::unordered_map<char, std::string> html_symbols = {
+    {'&', std::string("&amp;")},
+    {'\"', std::string("&quot;")},
+    {'\'', std::string("&apos;")},
+    {'<', std::string("&lt;")},
+    {'>', std::string("&gt;")}
+};
+
 std::string Text::Encode(std::string data) const
 {
     std::string substring;
     std::string replace_to;
-    size_t pos = 0;
+    std::size_t pos = 0;
 
-    // TODO Переделать на вектор пар string-string и обработку в цикле
-
-    // 0. Амперсанд
-    substring = "&"s;
-    replace_to = "&amp;"s;
-    // Получаем первое вхождение искомой подстроки
-    pos = data.find(substring);
-    // Повторяем пока не достигнем конца строки
-    while (pos != std::string::npos)
+    // Заменяем спецсимволы из таблицы на их эквиваленты
+    for (const auto& [key, value] : html_symbols)
     {
-        // Заменяем первое вхождение
-        data.replace(pos, substring.size(), replace_to);
-        // Ищем следующее вхождение
-        pos = data.find(substring, pos + replace_to.size());
-    }
-
-
-    // 1. Кавычка
-    substring = "\""s;
-    replace_to = "&quot;"s;
-    // Получаем первое вхождение искомой подстроки
-    pos = data.find(substring);
-    // Повторяем пока не достигнем конца строки
-    while (pos != std::string::npos)
-    {
-        // Заменяем первое вхождение
-        data.replace(pos, substring.size(), replace_to);
-        // Ищем следующее вхождение
-        pos = data.find(substring, pos + replace_to.size());
-    }
-
-
-    // 2. Апостроф
-    substring = "\'"s;
-    replace_to = "&apos;"s;
-    // Получаем первое вхождение искомой подстроки
-    pos = data.find(substring);
-    // Повторяем пока не достигнем конца строки
-    while (pos != std::string::npos)
-    {
-        // Заменяем первое вхождение
-        data.replace(pos, substring.size(), replace_to);
-        // Ищем следующее вхождение
-        pos = data.find(substring, pos + replace_to.size());
-    }
-
-
-    // 3. Символ <
-    substring = "<"s;
-    replace_to = "&lt;"s;
-    // Получаем первое вхождение искомой подстроки
-    pos = data.find(substring);
-    // Повторяем пока не достигнем конца строки
-    while (pos != std::string::npos)
-    {
-        // Заменяем первое вхождение
-        data.replace(pos, substring.size(), replace_to);
-        // Ищем следующее вхождение
-        pos = data.find(substring, pos + replace_to.size());
-    }
-
-
-    // 4. Символ >
-    substring = ">"s;
-    replace_to = "&gt;"s;
-    // Получаем первое вхождение искомой подстроки
-    pos = data.find(substring);
-    // Повторяем пока не достигнем конца строки
-    while (pos != std::string::npos)
-    {
-        // Заменяем первое вхождение
-        data.replace(pos, substring.size(), replace_to);
-        // Ищем следующее вхождение
-        pos = data.find(substring, pos + replace_to.size());
+        // Получаем первое вхождение искомой подстроки
+        pos = data.find(key);
+        // Повторяем пока не достигнем конца строки
+        while (pos != std::string::npos)
+        {
+            // Заменяем первое вхождение
+            data.replace(pos, sizeof(key), value);
+            // Ищем следующее вхождение
+            pos = data.find(substring, pos + value.size());
+        }
     }
 
     return data;
