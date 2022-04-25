@@ -17,7 +17,7 @@ class Node;  // Forward declaration. See declaration below
 using Dict = std::map<std::string, Node>;
 using Array = std::vector<Node>;
 //using Number = std::variant<int, double>;
-using JSON_node = std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string>;
+using JSONNode = std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string>;
 
 // Эта ошибка должна выбрасываться при ошибках парсинга JSON
 class ParsingError : public std::runtime_error
@@ -56,14 +56,14 @@ public:
     double AsDouble() const;
     const std::string& AsString() const;
 
-    const JSON_node& GetValue() const;
+    const JSONNode& GetValue() const;
 
     // Перегруженный сокращенный оператор сравнения для Node
     bool operator==(const Node& rhs) const;
     // Перегруженный сокращенный оператор неравенства для Node
     bool operator!=(const Node& rhs) const;
 private:
-    JSON_node json_node_var_;    // std::variant
+    JSONNode json_node_var_;    // std::variant
 };
 
 // Класс JSON документа без методов манипуляции им (реализованы внешними функциями)
