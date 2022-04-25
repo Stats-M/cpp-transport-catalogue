@@ -1,7 +1,5 @@
 /*
- * В этом файле вы можете разместить код, отвечающий за визуализацию карты маршрутов в формате SVG.
- * Визуализация маршрутов вам понадобится во второй части итогового проекта.
- * Пока можете оставить файл пустым.
+ * Назначение модуля: код, отвечающий за визуализацию карты маршрутов в формате SVG.
  */
 
 #include "map_renderer.h"
@@ -124,34 +122,11 @@ void MapRenderer::ApplyRenderSettings(RendererSettings& settings)
     settings_ = settings;
 }
 
-svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
+
+void MapRenderer::AddRouteLinesToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
+										SphereProjector& sp, 
+										std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
 {
-	using namespace std::literals;
-
-	// 1. Нормализуем координаты для переданных в рендерер точек (только непустые маршруты)
-	std::unordered_set<geo::Coordinates, geo::CoordinatesHasher> all_coords;                             // Кэш координат для калибровки
-	//std::unordered_map<geo::Coordinates, std::string_view, geo::CoordinatesHasher> all_unique_stops;   // Кэш уникальных остановок
-	std::map<std::string_view, geo::Coordinates> all_unique_stops;               // Кэш уникальных остановок
-	for (const auto& [name, data] : routes_to_render)
-	{
-		//for (const auto& stop : data.stop_coords)
-		//{
-		//	all_coords.insert(stop);
-		//}
-		for (size_t i = 0; i < data.stop_coords.size(); ++i)
-		{
-			all_coords.insert(data.stop_coords[i]);
-			//all_unique_stops.insert(make_pair(data.stop_coords[i], data.stop_names[i]));
-			all_unique_stops.insert(make_pair(data.stop_names[i], data.stop_coords[i]));
-		}
-	}
-	// Пропускаем через проектор ВСЕ координаты и получаем поправочный коэффициент
-	SphereProjector sp{ std::begin(all_coords), std::end(all_coords), 
-		settings_.width, settings_.height, settings_.padding};
-
-	// 2. Добавляем в контейнер объекты Drawable, используя нормализованные координаты
-	std::vector<std::unique_ptr<svg::Drawable>> picture_;   // Контейнер Drawable-объектов
-	// 2.1 Линии маршрутов
 	for (const auto& [name, data] : routes_to_render)
 	{
 		std::vector<svg::Point> points;  // Вектор нормализованных координат
@@ -163,18 +138,24 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 		picture_.emplace_back(std::make_unique<RouteLine>(RouteLine{ points, GetColorFromPallete() , settings_ }));
 	}
 
-	// 2.2 Метки маршрутов
+}
+
+
+void MapRenderer::AddRouteLabelsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
+								 		 SphereProjector& sp,
+								 		 std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
+{
 	ResetPallette();  // Сбрасываем текущий цвет палитры, начинаем с первого
 	for (const auto& [name, data] : routes_to_render)
 	{
 		// Получаем цвет текущего маршрута
 		svg::Color current_line_color = GetColorFromPallete();
 		// Выводим первую метку маршрута (стартовую)
-		picture_.emplace_back(std::make_unique<TextLabel>(TextLabel{sp(data.stop_coords[0]),
-														  name, 
+		picture_.emplace_back(std::make_unique<TextLabel>(TextLabel{ sp(data.stop_coords[0]),
+														  name,
 														  current_line_color,
-														  settings_, 
-														  false}));
+														  settings_,
+														  false }));
 		// Если маршрут НЕ кольцевой и у него больше 1 остановки, выводим метку конечной остановки
 		if ((!data.is_circular) && (data.stop_coords.size() > 1))
 		{
@@ -191,24 +172,27 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 			}
 		}
 	}
+}
 
-	// 2.3 Метки остановок (только те, через которые проходят маршруты)
-	//      (очередность - лексикографическое возрастание)
-	/*
-	for (const auto& stop : all_coords)
-	{
-		// формируем unique_ptr
-		picture_.emplace_back(std::make_unique<StopIcon>(StopIcon{ sp(stop), settings_}));
-	}
-	*/
+
+void MapRenderer::AddStopLabelsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
+										SphereProjector& sp,
+										std::map<std::string_view, geo::Coordinates> all_unique_stops)
+{
 	for (const auto& stop : all_unique_stops)
 	{
 		// формируем unique_ptr
 		picture_.emplace_back(std::make_unique<StopIcon>(StopIcon{ sp(stop.second), settings_ }));
 	}
+}
 
 
-	// 2.4 Метки остановок (очередность - лексикографическое возрастание)
+void MapRenderer::AddStopIconsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
+							  		   SphereProjector& sp,
+									   std::map<std::string_view, geo::Coordinates> all_unique_stops)
+{
+	using namespace std::literals;
+
 	for (const auto& stop : all_unique_stops)
 	{
 		// формируем unique_ptr
@@ -218,12 +202,45 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 														  settings_,
 														  true }));
 	}
+}
 
-	// Вызываем Draw() по очереди для всех элеметов контейнера объектов Drawable, 
-	// формируя svg::Document
+
+svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
+{
+	std::unordered_set<geo::Coordinates, geo::CoordinatesHasher> all_coords;    // Кэш координат для калибровки
+	std::map<std::string_view, geo::Coordinates> all_unique_stops;              // Кэш уникальных остановок (сортировка по имени)
+
+	// 1. Нормализуем координаты для переданных в рендерер точек (только непустые маршруты)
+	for (const auto& [name, data] : routes_to_render)
+	{
+		for (size_t i = 0; i < data.stop_coords.size(); ++i)
+		{
+			all_coords.insert(data.stop_coords[i]);
+			all_unique_stops.insert(make_pair(data.stop_names[i], data.stop_coords[i]));
+		}
+	}
+	// Пропускаем через проектор ВСЕ координаты и получаем поправочный коэффициент
+	SphereProjector sp{ std::begin(all_coords), std::end(all_coords), 
+		settings_.width, settings_.height, settings_.padding};
+
+	// 2. Добавляем в контейнер Drawable-объекты, используя нормализованные координаты
+	std::vector<std::unique_ptr<svg::Drawable>> picture_;   // Контейнер Drawable-объектов
+	// 2.1 Линии маршрутов
+	AddRouteLinesToRender(picture_, sp, routes_to_render);
+	// 2.2 Метки маршрутов
+	AddRouteLabelsToRender(picture_, sp, routes_to_render);
+	// 2.3 Метки остановок (только те, через которые проходят маршруты)
+	//      (очередность - лексикографическое возрастание)
+	AddStopLabelsToRender(picture_, sp, all_unique_stops);
+	// 2.4 Метки остановок (очередность - лексикографическое возрастание)
+	AddStopIconsToRender(picture_, sp, all_unique_stops);
+
+	// 3. Вызываем Draw() по очереди для всех элеметов контейнера, формируя svg::Document
+	//    из svg-примитивов
 	svg::Document map;
 	DrawPicture(picture_, map);
-	// Тут можно добавить svg-примитивы прямо к map, если необходимо
+
+	// Тут можно вручную добавить svg-примитивы прямо к map, если необходимо
 
 	return map;  // Document.Render() будет вызывать уже метод-получатель
 }
