@@ -18,7 +18,7 @@
 # STOP STOP STOP STOP STOP
 Information below is obsolete due to large scale architechture changes. Please wait until instructions below will be updated.
 
-Формат ввода базы данных [obsolete]
+[obsolete] Формат ввода базы данных
 ========================
 В первой строке стандартного потока ввода содержится число N — количество запросов на обновление базы данных, затем — по одному на строке — вводятся сами запросы. Запросы бывают:
 
@@ -35,7 +35,7 @@ Bus X: описание маршрута
 stop1 - stop2 - ... stopN: автобус следует от stop1 до stopN и обратно с указанными промежуточными остановками.
 stop1 > stop2 > ... > stopN > stop1: кольцевой маршрут с конечной stop1.
 
-Формат запросов к базе данных [obsolete]
+[obsolete] Формат запросов к базе данных
 =============================
 Запросы к базе данных подаются в cin после запросов на создание базы. В первой строке вводится количество запросов, затем — по одному в строке — вводятся сами запросы. Запросы в этой задаче бывают:
 
@@ -58,7 +58,7 @@ Stop X: buses bus1 bus2 ... busN
 ```
 bus1 bus2 ... busN — список автобусов, проходящих через остановку.
 
-Пример [obsolete]
+[obsolete] Пример 
 ======
 ```
 Ввод
@@ -87,7 +87,7 @@ Stop Biryulyovo Zapadnoye
 ```
 
 ```
-Вывод [obsolete]
+Вывод
 Bus 256: 6 stops on route, 5 unique stops, 5950 route length, 1.36124 curvature
 Bus 750: 7 stops on route, 3 unique stops, 27400 route length, 1.30853 curvature
 Bus 751: not found
