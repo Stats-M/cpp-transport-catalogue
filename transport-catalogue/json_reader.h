@@ -12,6 +12,7 @@
 #pragma once
 
 #include "request_handler.h"        // "Фасад" транспортного каталога
+#include "json_builder.h"
 #include "json.h"
 #include "map_renderer.h"
 
