@@ -32,7 +32,7 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 
 	const json::Document j_doc = json::Load(input);
 	// Корневой узел JSON документа - словарь
-	const json::Dict j_dict = j_doc.GetRoot().AsMap();
+	const json::Dict j_dict = j_doc.GetRoot().AsDict();
 	// Находим точку начала секции входных данных в словаре
 	const auto base_requests_it = j_dict.find("base_requests"s);
 	if (base_requests_it != j_dict.cend())
@@ -46,7 +46,7 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 	if (renderer_settings_it != j_dict.cend())
 	{
 		// Есть секция настроек. Формат данных - словарь
-		ReadRendererSettings(mr, renderer_settings_it->second.AsMap());
+		ReadRendererSettings(mr, renderer_settings_it->second.AsDict());
 	}
 
 	// Находим точку начала секции запросов в словаре
@@ -78,8 +78,8 @@ void AddToDB(transport_catalogue::TransportCatalogue& tc, const json::Array& j_a
 		for (const auto& element : j_arr)
 		{
 			// Ищем ключ "type", хранящий тип записи
-			const auto request_type = element.AsMap().find("type"s);
-			if (request_type != element.AsMap().end())
+			const auto request_type = element.AsDict().find("type"s);
+			if (request_type != element.AsDict().end())
 			{
 				// Для каждой пары проверяем соответствие Value i-му значению вектора stages
 				// При соответствии вызываем отдельную для каждого прохода функцию обработки
@@ -89,15 +89,15 @@ void AddToDB(transport_catalogue::TransportCatalogue& tc, const json::Array& j_a
 					{
 					case 0:
 						// Это остановка (тип записи - словарь). Обрабатываем название и координаты 
-						AddStopData(tc, element.AsMap());
+						AddStopData(tc, element.AsDict());
 						break;
 					case 1:
 						// Это остановка (тип записи - словарь). Обрабатываем расстояния 
-						AddStopDistance(tc, element.AsMap());
+						AddStopDistance(tc, element.AsDict());
 						break;
 					case 2:
 						// Это маршрут (тип записи - словарь). Обрабатываем полностью
-						AddRouteData(tc, element.AsMap());
+						AddRouteData(tc, element.AsDict());
 						break;
 					}
 				}
@@ -126,7 +126,7 @@ void AddStopDistance(transport_catalogue::TransportCatalogue& tc, const json::Di
 	// Продолжаем обработку только если остановка отправления есть в справочнике
 	if (from_ptr != nullptr)
 	{
-		const json::Dict stops = j_dict.at("road_distances"s).AsMap();
+		const json::Dict stops = j_dict.at("road_distances"s).AsDict();
 		for (const auto& [to_stop_name, distance] : stops)
 		{
 			tc.AddDistance(from_ptr, tc.GetStopByName(to_stop_name), static_cast<size_t>(distance.AsInt()));
@@ -238,21 +238,21 @@ void ParseRawJSONQueries(transport_catalogue::RequestHandler& rh, const json::Ar
 	// Для каждого запроса в j_arr получаем ответ в виде json::Node
 	for (const auto& query : j_arr)
 	{
-		const auto request_type = query.AsMap().find("type"s);
-		if (request_type != query.AsMap().cend())
+		const auto request_type = query.AsDict().find("type"s);
+		if (request_type != query.AsDict().cend())
 		{
 			// Есть поле типа запроса "type", обрабатываем
 			if (request_type->second.AsString() == "Stop"s)
 			{
-				processed_queries.emplace_back(ProcessStopQuery(rh, query.AsMap()));
+				processed_queries.emplace_back(ProcessStopQuery(rh, query.AsDict()));
 			}
 			else if (request_type->second.AsString() == "Bus"s)
 			{
-				processed_queries.emplace_back(ProcessRouteQuery(rh, query.AsMap()));
+				processed_queries.emplace_back(ProcessRouteQuery(rh, query.AsDict()));
 			}
 			else if (request_type->second.AsString() == "Map"s)
 			{
-				processed_queries.emplace_back(ProcessMapQuery(rh, query.AsMap()));
+				processed_queries.emplace_back(ProcessMapQuery(rh, query.AsDict()));
 			}
 		}
 	}
@@ -269,8 +269,16 @@ const json::Node ProcessStopQuery(transport_catalogue::RequestHandler& rh, const
 	if (stop_query_ptr == nullptr)
 	{
 		// Такой остановки нет. Генерируем сообщение об ошибке
+		/*
 		return json::Dict{ {"request_id"s, j_dict.at("id"s).AsInt()}, 
 						  {"error_message"s, "not found"s}};
+		*/
+		return json::Builder{}
+			.StartDict()
+				.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+				.Key("error_message"s).Value("not found"s)
+			.EndDict()
+			.Build();
 	}
 
 	// Получаем отсортированный список маршрутов (может быть и 0 маршрутов)
@@ -282,8 +290,16 @@ const json::Node ProcessStopQuery(transport_catalogue::RequestHandler& rh, const
 	}
 
 	// Формируем JSON ответ
+	/*
 	return json::Dict{ {"buses"s, routes},
 					  {"request_id"s, j_dict.at("id"s).AsInt()} };
+	*/
+	return json::Builder{}
+		.StartDict()
+			.Key("buses"s).Value(routes)
+			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+		.EndDict()
+		.Build();
 }
 
 const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler& rh, const json::Dict& j_dict)
@@ -296,16 +312,36 @@ const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler& rh, cons
 	if (route_query_ptr == nullptr)
 	{
 		// Такого маршрута нет. Генерируем сообщение об ошибке
+		/*
 		return json::Dict{ {"request_id"s, j_dict.at("id"s).AsInt()},
 						  {"error_message"s, "not found"s} };
+		*/
+		return json::Builder{}
+			.StartDict()
+				.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+				.Key("error_message"s).Value("not found"s)
+			.EndDict()
+			.Build();
 	}
 
 	// Формируем JSON ответ
+	/*
 	return json::Dict{ {"curvature"s, route_query_ptr.value()->curvature},
 					  {"request_id"s, j_dict.at("id"s).AsInt()},
 					  {"route_length"s, static_cast<int>(route_query_ptr.value()->meters_route_length)},
 					  {"stop_count"s, static_cast<int>(route_query_ptr.value()->stops_on_route)},
 					  {"unique_stop_count"s, static_cast<int>(route_query_ptr.value()->unique_stops)} };
+	*/
+	return json::Builder{}
+		.StartDict()
+			.Key("curvature"s).Value(route_query_ptr.value()->curvature)
+			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+			.Key("route_length"s).Value(static_cast<int>(route_query_ptr.value()->meters_route_length))
+			.Key("stop_count"s).Value(static_cast<int>(route_query_ptr.value()->stops_on_route))
+			.Key("unique_stop_count"s).Value(static_cast<int>(route_query_ptr.value()->unique_stops))
+		.EndDict()
+		.Build();
+
 }
 
 
@@ -320,8 +356,16 @@ const json::Node ProcessMapQuery(transport_catalogue::RequestHandler& rh, const 
 	svg_map.Render(os_stream);
 
 	// Формируем JSON ответ, получая std:string из содержимого текстового потока
+	/*
 	return json::Dict{ {"map"s, os_stream.str()},
 					  {"request_id"s, j_dict.at("id"s).AsInt()} };
+	*/
+	return json::Builder{}
+		.StartDict()
+			.Key("map"s).Value(os_stream.str())
+			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+		.EndDict()
+		.Build();
 }
 
 }  // namespace json_reader 
