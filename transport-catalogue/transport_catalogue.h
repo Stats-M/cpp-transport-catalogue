@@ -36,7 +36,7 @@ using StopStatPtr = const StopStat*;
 
 // Структура ответа на запросы типа Информация о маршруте
 struct RouteStat
-{	
+{
 	// Параметризованный конструктор
 	explicit RouteStat(size_t, size_t, int64_t, double, std::string_view);
 	size_t stops_on_route = 0;
@@ -70,6 +70,10 @@ public:
 	StopStatPtr GetBusesForStopInfo(const std::string_view) const;  // Возвращает указатель на результат запроса об автобусах для останоки
 
 	void GetAllRoutes(std::map<const std::string, RendererData>&) const;    // Возвращает словарь маршрутов с их остановками
+
+	size_t GetAllStopsCount() const;                     // ROUTER. Возвращает количество уникальных остановок в базе
+	const std::vector<StopPtr> GetAllStopsPtr() const;   // ROUTER. Возвращает вектор указателей на остановки
+	const std::deque<RoutePtr> GetAllRoutesPtr() const;  // ROUTER. Возвращает вектор указателей на маршруты
 
 private:
 	std::deque<Stop> all_stops_data_;                                     // Дек с информацией обо всех остановках (реальные данные, не указатели)
