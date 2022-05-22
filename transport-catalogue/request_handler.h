@@ -1,7 +1,7 @@
 /*
  * Назначение модуля: обработчик запросов к базе, содержащего логику,
  * которую не хотелось бы помещать ни в transport_catalogue, ни в json reader.
- * 
+ *
  *    request_handler - интерфейс("Фасад) транспортного справочника (двоичные данные)
  *        json_reader - интерфейс работы с данными формата json + добавление данных
  */
@@ -16,7 +16,6 @@
 #include <string_view>      // для типа данных в RequestHandler
 #include <map>              // для передачи словаря всех маршрутов
 
-// В будущих проектах после снятия ограничений перенести в отдельный файл типа utility.h/.cpp
 namespace detail
 {
 // Преобразует 1 строку в 2, разделенные count по порядку символом-разделителем
@@ -34,12 +33,13 @@ namespace transport_catalogue
 // Класс RequestHandler играет роль Фасада, упрощающего взаимодействие JSON reader-а
 // с другими подсистемами приложения.
 // См. паттерн проектирования Фасад: https://ru.wikipedia.org/wiki/Фасад_(шаблон_проектирования)
-class RequestHandler {
+class RequestHandler
+{
 public:
     // MapRenderer понадобится в следующей части итогового проекта
     RequestHandler(const TransportCatalogue& tc, map_renderer::MapRenderer& mr) : tc_(tc), mr_(mr)
     {}
-    
+
     // Возвращает информацию о маршруте
     const std::optional<RouteStatPtr> GetRouteInfo(const std::string_view& bus_name) const;
 
