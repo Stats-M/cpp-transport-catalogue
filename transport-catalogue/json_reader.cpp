@@ -16,7 +16,7 @@ namespace json_reader
 
 // ---------------Generic I/O-------------------------
 
-void ProcessJSON(transport_catalogue::TransportCatalogue& tc, 
+void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 				 map_renderer::MapRenderer& mr,
 				 std::istream& input, std::ostream& output)
 {
@@ -49,13 +49,26 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 		ReadRendererSettings(mr, renderer_settings_it->second.AsDict());
 	}
 
+	// Создаем объект роутера. Создаем здесь, т.к. инициализация графа
+	// роутера требует информации о количестве вершин (они же - остановки),
+	// информация о которых к этому моменту уже загружена
+	router::TransportRouter tr(tc);
+
+	// Находим точку начала секции настроек роутера в словаре
+	const auto router_settings_it = j_dict.find("routing_settings"s);
+	if (router_settings_it != j_dict.cend())
+	{
+		// Есть секция настроек. Формат данных - словарь
+		ReadRouterSettings(tr, router_settings_it->second.AsDict());
+	}
+
 	// Находим точку начала секции запросов в словаре
 	const auto stat_requests_it = j_dict.find("stat_requests"s);
 	if (stat_requests_it != j_dict.cend())
 	{
 		// Есть запросы к справочнику. Формат данных - массив (вектор)
 		//QueryAsJSON(stat_requests_it->second.AsArray(), rh, output);
-		ParseRawJSONQueries(rh, stat_requests_it->second.AsArray(), output);
+		ParseRawJSONQueries(rh, tr, stat_requests_it->second.AsArray(), output);
 	}
 }
 
@@ -227,9 +240,23 @@ void ReadRendererSettings(map_renderer::MapRenderer& mr, const json::Dict& j_dic
 	mr.ApplyRenderSettings(new_settings);
 }
 
+void ReadRouterSettings(router::TransportRouter& tr, const json::Dict& j_dict)
+{
+	router::RouterSettings new_settings;
+
+	new_settings.bus_velocity = j_dict.at("bus_velocity").AsInt();
+	new_settings.bus_wait_time = j_dict.at("bus_wait_time").AsInt();
+
+	// Применяем новые настройки роутера
+	tr.ApplyRouterSettings(new_settings);
+}
+
 //--------------Processing requests-------------------
 
-void ParseRawJSONQueries(transport_catalogue::RequestHandler& rh, const json::Array& j_arr, std::ostream& output)
+void ParseRawJSONQueries(transport_catalogue::RequestHandler& rh, 
+						 router::TransportRouter& tr, 
+						 const json::Array& j_arr, 
+						 std::ostream& output)
 {
 	using namespace std::literals;
 
@@ -248,11 +275,15 @@ void ParseRawJSONQueries(transport_catalogue::RequestHandler& rh, const json::Ar
 			}
 			else if (request_type->second.AsString() == "Bus"s)
 			{
-				processed_queries.emplace_back(ProcessRouteQuery(rh, query.AsDict()));
+				processed_queries.emplace_back(ProcessBusQuery(rh, query.AsDict()));
 			}
 			else if (request_type->second.AsString() == "Map"s)
 			{
 				processed_queries.emplace_back(ProcessMapQuery(rh, query.AsDict()));
+			}
+			else if (request_type->second.AsString() == "Route"s)
+			{
+				processed_queries.emplace_back(ProcessRouteQuery(tr, query.AsDict()));
 			}
 		}
 	}
@@ -270,13 +301,13 @@ const json::Node ProcessStopQuery(transport_catalogue::RequestHandler& rh, const
 	{
 		// Такой остановки нет. Генерируем сообщение об ошибке
 		/*
-		return json::Dict{ {"request_id"s, j_dict.at("id"s).AsInt()}, 
+		return json::Dict{ {"request_id"s, j_dict.at("id"s).AsInt()},
 						  {"error_message"s, "not found"s}};
 		*/
 		return json::Builder{}
 			.StartDict()
-				.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
-				.Key("error_message"s).Value("not found"s)
+			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+			.Key("error_message"s).Value("not found"s)
 			.EndDict()
 			.Build();
 	}
@@ -296,16 +327,16 @@ const json::Node ProcessStopQuery(transport_catalogue::RequestHandler& rh, const
 	*/
 	return json::Builder{}
 		.StartDict()
-			.Key("buses"s).Value(routes)
-			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+		.Key("buses"s).Value(routes)
+		.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
 		.EndDict()
 		.Build();
 }
 
-const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler& rh, const json::Dict& j_dict)
+const json::Node ProcessBusQuery(transport_catalogue::RequestHandler& rh, const json::Dict& j_dict)
 {
 	using namespace std::literals;
-	
+
 	const std::string route_name = j_dict.at("name"s).AsString();
 	const auto route_query_ptr = rh.GetRouteInfo(route_name);
 
@@ -318,8 +349,8 @@ const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler& rh, cons
 		*/
 		return json::Builder{}
 			.StartDict()
-				.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
-				.Key("error_message"s).Value("not found"s)
+			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+			.Key("error_message"s).Value("not found"s)
 			.EndDict()
 			.Build();
 	}
@@ -334,11 +365,11 @@ const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler& rh, cons
 	*/
 	return json::Builder{}
 		.StartDict()
-			.Key("curvature"s).Value(route_query_ptr.value()->curvature)
-			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
-			.Key("route_length"s).Value(static_cast<int>(route_query_ptr.value()->meters_route_length))
-			.Key("stop_count"s).Value(static_cast<int>(route_query_ptr.value()->stops_on_route))
-			.Key("unique_stop_count"s).Value(static_cast<int>(route_query_ptr.value()->unique_stops))
+		.Key("curvature"s).Value(route_query_ptr.value()->curvature)
+		.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+		.Key("route_length"s).Value(static_cast<int>(route_query_ptr.value()->meters_route_length))
+		.Key("stop_count"s).Value(static_cast<int>(route_query_ptr.value()->stops_on_route))
+		.Key("unique_stop_count"s).Value(static_cast<int>(route_query_ptr.value()->unique_stops))
 		.EndDict()
 		.Build();
 
@@ -362,10 +393,56 @@ const json::Node ProcessMapQuery(transport_catalogue::RequestHandler& rh, const 
 	*/
 	return json::Builder{}
 		.StartDict()
-			.Key("map"s).Value(os_stream.str())
-			.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
+		.Key("map"s).Value(os_stream.str())
+		.Key("request_id"s).Value(j_dict.at("id"s).AsInt())
 		.EndDict()
 		.Build();
 }
+
+
+const json::Node ProcessRouteQuery(router::TransportRouter& tr, const json::Dict& j_dict)
+{
+	using namespace std::literals;
+
+	auto route_data = tr.CalculateRoute(j_dict.at("from").AsString(), j_dict.at("to").AsString());
+
+	// Подходящий маршрут не найден. Генерируем сообщение об ошибке
+	if (!route_data.founded)
+	{
+		return json::Builder{}.StartDict()
+			.Key("request_id").Value(j_dict.at("id").AsInt())
+			.Key("error_message").Value("not found")
+			.EndDict()
+			.Build();
+	}
+
+	json::Array items;
+	// Проходим по элементам маршрута и формируем ответ
+	for (const auto& item : route_data.items)
+	{
+		json::Dict items_map;
+		if (item.type == graph::EdgeType::TRAVEL)
+		{
+			items_map["type"] = "Bus"s;
+			items_map["bus"] = item.edge_name;
+			items_map["span_count"] = item.span_count;
+		}
+		else if (item.type == graph::EdgeType::WAIT)
+		{
+			items_map["type"] = "Wait"s;
+			items_map["stop_name"] = item.edge_name;
+		}
+		items_map["time"] = item.time;
+		items.push_back(items_map);
+	}
+	return json::Builder{}.StartDict()
+		.Key("request_id").Value(j_dict.at("id").AsInt())
+		.Key("total_time").Value(route_data.total_time)
+		.Key("items").Value(items)
+		.EndDict()
+		.Build();
+}
+
+
 
 }  // namespace json_reader 
