@@ -10,11 +10,11 @@
 - STL smart pointers
 - std::variant and std:optional
 - JSON load / output
-- SVG graph output
+- SVG image format output
 - Curiously Recurring Template Pattern (CRTP)
 - Facade design pattern
 - C++17 with С++20 Ranges emulation
-- Directed Weighted Graph data structure
+- Directed Weighted Graph data structure for Router module
 
 # STOP STOP STOP STOP STOP
 Information below is obsolete due to large scale architechture changes. Please wait until instructions below will be updated.
