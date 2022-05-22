@@ -13,7 +13,8 @@
 - SVG graph output
 - Curiously Recurring Template Pattern (CRTP)
 - Facade design pattern
-- C++17
+- C++17 with С++20 Ranges emulation
+- Directed Weighted Graph data structure
 
 # STOP STOP STOP STOP STOP
 Information below is obsolete due to large scale architechture changes. Please wait until instructions below will be updated.
