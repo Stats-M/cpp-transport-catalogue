@@ -15,6 +15,7 @@
 #include "json_builder.h"
 #include "json.h"
 #include "map_renderer.h"
+#include "transport_router.h"
 
 #include <iostream>                  // для std::cin (isteam) и std::cout (osteam)
 #include <sstream>                   // для ostringstream
@@ -49,16 +50,18 @@ void AddRouteData(transport_catalogue::TransportCatalogue&, const json::Dict&);
 
 const svg::Color ConvertJSONColorToSVG(const json::Node&);
 void ReadRendererSettings(map_renderer::MapRenderer&, const json::Dict&);
+void ReadRouterSettings(router::TransportRouter&, const json::Dict&);
 
 //--------------Requests section parsing-------------------
 
 // Функция осуществляет разбор секции запросов JSON, назначая соответствующий обработчик
-void ParseRawJSONQueries(transport_catalogue::RequestHandler&, const json::Array&, std::ostream&);
+void ParseRawJSONQueries(transport_catalogue::RequestHandler&, router::TransportRouter&, const json::Array&, std::ostream&);
 // Функция обрабатывает запросы типа "Stop" (маршруты через остановку)
 const json::Node ProcessStopQuery(transport_catalogue::RequestHandler&, const json::Dict&);
 // Функция обрабатывает запросы типа "Bus"
-const json::Node ProcessRouteQuery(transport_catalogue::RequestHandler&, const json::Dict&);
+const json::Node ProcessBusQuery(transport_catalogue::RequestHandler&, const json::Dict&);
 // Функция обрабатывает запросы типа "Map" (текст svg-файла)
 const json::Node ProcessMapQuery(transport_catalogue::RequestHandler&, const json::Dict&);
-
+// Функция обрабатывает запросы типа "Route" (построение маршрута между произвольными остановками)
+const json::Node ProcessRouteQuery(router::TransportRouter&, const json::Dict&);
 }
