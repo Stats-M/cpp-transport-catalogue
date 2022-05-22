@@ -10,7 +10,7 @@
 - STL smart pointers
 - std::variant and std:optional
 - JSON load / output
-- SVG image format output
+- SVG image format embedded inside XML output
 - Curiously Recurring Template Pattern (CRTP)
 - Facade design pattern
 - C++17 with С++20 Ranges emulation
