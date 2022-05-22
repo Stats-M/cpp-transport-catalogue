@@ -1,4 +1,5 @@
 #include "transport_catalogue.h"
+#include <algorithm>   // для sort
 
 namespace transport_catalogue
 {
@@ -10,10 +11,10 @@ StopStat::StopStat(std::string_view stop_name, std::set<std::string_view>& buses
 {}
 
 RouteStat::RouteStat(size_t stops, size_t unique_stops, int64_t meters_length, double curvature, std::string_view name) :
-	stops_on_route(stops), 
+	stops_on_route(stops),
 	unique_stops(unique_stops),
-	meters_route_length(meters_length), 
-	curvature(curvature), 
+	meters_route_length(meters_length),
+	curvature(curvature),
 	name(name)
 {}
 
@@ -47,7 +48,7 @@ void TransportCatalogue::AddRoute(Route&& route)
 	{
 		// Такого маршрута в базе нет, добавлям
 
-		/* Проверка отключена: в route передается vector<StopPtr>, то что они не 
+		/* Проверка отключена: в route передается vector<StopPtr>, то что они не
 		* ==nullptr будет проверять вызывающая функция, т.к. быстрее не добавить
 		* пустой указатель, чем потом проходить весь вектор в поисках пустых записей
 		// 1 Проверяем существование остановок, несуществующие удаляем из route
@@ -203,10 +204,10 @@ RouteStatPtr TransportCatalogue::GetRouteInfo(const std::string_view route_name)
 	}
 
 	// Маршрут с таким именем существует
-	return new RouteStat(ptr->stops.size(), 
-						 ptr->unique_stops_qty, 
+	return new RouteStat(ptr->stops.size(),
+						 ptr->unique_stops_qty,
 						 ptr->meters_route_length,
-						 ptr->curvature, 
+						 ptr->curvature,
 						 ptr->route_name);
 }
 
@@ -260,12 +261,44 @@ void TransportCatalogue::GetAllRoutes(std::map<const std::string, RendererData>&
 				item.stop_names.push_back(stop->name);
 			}
 			item.is_circular = route.is_circular;
-			
+
 			all_routes.emplace(make_pair(route.route_name, item));
 		}
 	}
 
 	return;
+}
+
+
+size_t TransportCatalogue::GetAllStopsCount() const
+{
+	return all_stops_data_.size();
+}
+
+
+const std::vector<StopPtr> TransportCatalogue::GetAllStopsPtr() const
+{
+	std::vector<StopPtr> stop_ptrs;
+	for (const auto& [stop_name, stop_ptr] : all_stops_map_)
+	{
+		stop_ptrs.push_back(stop_ptr);
+	}
+	return stop_ptrs;
+}
+
+
+const std::deque<RoutePtr> TransportCatalogue::GetAllRoutesPtr() const
+{
+	std::deque<RoutePtr> route_ptrs;
+	for (const auto& route : all_buses_data_)
+	{
+		route_ptrs.emplace_back(&route);
+	}
+	std::sort(route_ptrs.begin(), route_ptrs.end(), [](RoutePtr lhs, RoutePtr rhs)
+			  {
+				  return lhs->route_name <= rhs->route_name;
+			  });
+	return route_ptrs;
 }
 
 }
