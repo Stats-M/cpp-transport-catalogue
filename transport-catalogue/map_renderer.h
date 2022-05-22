@@ -51,9 +51,9 @@ class SphereProjector
 {
 public:
     template <typename PointInputIt>
-    SphereProjector(PointInputIt points_begin, PointInputIt points_end, 
+    SphereProjector(PointInputIt points_begin, PointInputIt points_end,
                     double max_width,
-                    double max_height, 
+                    double max_height,
                     double padding)
         : padding_(padding)
     {
@@ -179,16 +179,16 @@ public:
                                std::map<const std::string, transport_catalogue::RendererData>& routes_to_render);
     // Метод добавляет названия маршрутов в SVG-файл
     void AddRouteLabelsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
-                               SphereProjector& sp,
-                               std::map<const std::string, transport_catalogue::RendererData>& routes_to_render);
+                                SphereProjector& sp,
+                                std::map<const std::string, transport_catalogue::RendererData>& routes_to_render);
     // Метод добавляет названия остановок в SVG-файл
     void AddStopLabelsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
                                SphereProjector& sp,
                                std::map<std::string_view, geo::Coordinates> all_unique_stops);
     // Метод добавляет метки остановок в SVG-файл
     void AddStopIconsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
-                               SphereProjector& sp,
-                               std::map<std::string_view, geo::Coordinates> all_unique_stops);
+                              SphereProjector& sp,
+                              std::map<std::string_view, geo::Coordinates> all_unique_stops);
 
     // Метод формирует итоговый SVG-файл, вызывая методы рендера всех составных частей документа
     svg::Document RenderMap(std::map<const std::string, transport_catalogue::RendererData>&);
