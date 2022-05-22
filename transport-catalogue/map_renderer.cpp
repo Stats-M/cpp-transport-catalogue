@@ -11,20 +11,20 @@ namespace map_renderer
 
 bool IsZero(const double value)
 {
-    return (std::abs(value) < EPSILON);
+	return (std::abs(value) < EPSILON);
 }
 
 svg::Point SphereProjector::operator()(geo::Coordinates coords) const
 {
-    return { (coords.lng - min_lon_) * zoom_coeff_ + padding_,
-            (max_lat_ - coords.lat) * zoom_coeff_ + padding_ };
+	return { (coords.lng - min_lon_) * zoom_coeff_ + padding_,
+			(max_lat_ - coords.lat) * zoom_coeff_ + padding_ };
 }
 
 // -----Классы фигур, реализующие интерфейс Drawable----
 
-RouteLine::RouteLine(const std::vector<svg::Point>& stop_points, 
-					 const svg::Color& stroke_color, 
-					 const RendererSettings& renderer_settings) : 
+RouteLine::RouteLine(const std::vector<svg::Point>& stop_points,
+					 const svg::Color& stroke_color,
+					 const RendererSettings& renderer_settings) :
 	stop_points_(stop_points), stroke_color_(stroke_color), renderer_settings_(renderer_settings)
 {}
 
@@ -43,12 +43,12 @@ void RouteLine::Draw(svg::ObjectContainer& container) const
 	container.Add(polyline);
 }
 
-TextLabel::TextLabel(const svg::Point& label_point, 
-					 const std::string& text, 
+TextLabel::TextLabel(const svg::Point& label_point,
+					 const std::string& text,
 					 const svg::Color& fill_fore_color,
 					 const RendererSettings& renderer_settings,
-					 const bool& is_stop) : 
-	label_point_(label_point), text_(text), fill_fore_color_(fill_fore_color), 
+					 const bool& is_stop) :
+	label_point_(label_point), text_(text), fill_fore_color_(fill_fore_color),
 	renderer_settings_(renderer_settings), is_stop_(is_stop)
 {}
 
@@ -84,7 +84,7 @@ void TextLabel::Draw(svg::ObjectContainer& container) const
 		fore_text.SetFillColor(fill_fore_color_);
 	}
 
-	 // Текст заднего плана (фон) создаем на основе текста переднего плана
+	// Текст заднего плана (фон) создаем на основе текста переднего плана
 	svg::Text back_text = fore_text;
 
 	// Параметры, уникальные для фонового текста
@@ -119,12 +119,12 @@ void StopIcon::Draw(svg::ObjectContainer& container) const
 
 void MapRenderer::ApplyRenderSettings(RendererSettings& settings)
 {
-    settings_ = settings;
+	settings_ = settings;
 }
 
 
 void MapRenderer::AddRouteLinesToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
-										SphereProjector& sp, 
+										SphereProjector& sp,
 										std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
 {
 	for (const auto& [name, data] : routes_to_render)
@@ -142,8 +142,8 @@ void MapRenderer::AddRouteLinesToRender(std::vector<std::unique_ptr<svg::Drawabl
 
 
 void MapRenderer::AddRouteLabelsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
-								 		 SphereProjector& sp,
-								 		 std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
+										 SphereProjector& sp,
+										 std::map<const std::string, transport_catalogue::RendererData>& routes_to_render)
 {
 	ResetPallette();  // Сбрасываем текущий цвет палитры, начинаем с первого
 	for (const auto& [name, data] : routes_to_render)
@@ -188,7 +188,7 @@ void MapRenderer::AddStopLabelsToRender(std::vector<std::unique_ptr<svg::Drawabl
 
 
 void MapRenderer::AddStopIconsToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
-							  		   SphereProjector& sp,
+									   SphereProjector& sp,
 									   std::map<std::string_view, geo::Coordinates> all_unique_stops)
 {
 	using namespace std::literals;
@@ -220,8 +220,8 @@ svg::Document MapRenderer::RenderMap(std::map<const std::string, transport_catal
 		}
 	}
 	// Пропускаем через проектор ВСЕ координаты и получаем поправочный коэффициент
-	SphereProjector sp{ std::begin(all_coords), std::end(all_coords), 
-		settings_.width, settings_.height, settings_.padding};
+	SphereProjector sp{ std::begin(all_coords), std::end(all_coords),
+		settings_.width, settings_.height, settings_.padding };
 
 	// 2. Добавляем в контейнер Drawable-объекты, используя нормализованные координаты
 	std::vector<std::unique_ptr<svg::Drawable>> picture_;   // Контейнер Drawable-объектов
