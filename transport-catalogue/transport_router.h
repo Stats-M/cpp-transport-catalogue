@@ -42,7 +42,7 @@ public:
 	TransportRouter(transport_catalogue::TransportCatalogue&);
 
 	void ApplyRouterSettings(RouterSettings&);
-	const RouterSettings& GetRouterSettings() const;
+	RouterSettings GetRouterSettings() const;
 
 	// Строит маршрут между двумя остановками
 	const RouteData CalculateRoute(const std::string_view, const std::string_view);

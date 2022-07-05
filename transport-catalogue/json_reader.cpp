@@ -14,26 +14,26 @@
 namespace json_reader
 {
 
+enum class ParseMode
+{
+	UNDEFINED,
+	MAKE_BASE,
+	PROCESS_REQUESTS,
+};
+
 // ---------------Generic I/O-------------------------
 
-void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
+void ProcessBaseJSON(transport_catalogue::TransportCatalogue& tc,
 				 map_renderer::MapRenderer& mr,
-				 std::istream& input, std::ostream& output)
+				 std::istream& input)
 {
-	// Временно отключено и перенесено сюда.
-	// Нужно делать static документ или класс чтобы можно было разделить
-	//LoadAsJSON(tc, input);     // Загружаем исходные данные в static переменную
-	//QueryAsJSON(rh, output);  // Отправляем запросы к справочнику и выводим результат
-
 	using namespace std::literals;
-
-	// Создаем обработчик запросов для справочника
-	transport_catalogue::RequestHandler rh(tc, mr);
 
 	const json::Document j_doc = json::Load(input);
 	// Корневой узел JSON документа - словарь
 	const json::Dict j_dict = j_doc.GetRoot().AsDict();
-	// Находим точку начала секции входных данных в словаре
+
+	// Находим точку начала секции входных данных в словаре (если есть)
 	const auto base_requests_it = j_dict.find("base_requests"s);
 	if (base_requests_it != j_dict.cend())
 	{
@@ -41,7 +41,7 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 		AddToDB(tc, base_requests_it->second.AsArray());
 	}
 
-	// Находим точку начала секции настроек рендерера в словаре
+	// Находим точку начала секции настроек рендерера в словаре (если есть)
 	const auto renderer_settings_it = j_dict.find("render_settings"s);
 	if (renderer_settings_it != j_dict.cend())
 	{
@@ -54,7 +54,7 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 	// информация о которых к этому моменту уже загружена
 	router::TransportRouter tr(tc);
 
-	// Находим точку начала секции настроек роутера в словаре
+	// Находим точку начала секции настроек роутера в словаре (если есть)
 	const auto router_settings_it = j_dict.find("routing_settings"s);
 	if (router_settings_it != j_dict.cend())
 	{
@@ -62,13 +62,60 @@ void ProcessJSON(transport_catalogue::TransportCatalogue& tc,
 		ReadRouterSettings(tr, router_settings_it->second.AsDict());
 	}
 
-	// Находим точку начала секции запросов в словаре
-	const auto stat_requests_it = j_dict.find("stat_requests"s);
-	if (stat_requests_it != j_dict.cend())
+	// Проверка секции настроек сериализации.
+	const auto serialization_settings_it = j_dict.find("serialization_settings"s);
+	if (serialization_settings_it != j_dict.cend())
 	{
-		// Есть запросы к справочнику. Формат данных - массив (вектор)
-		//QueryAsJSON(stat_requests_it->second.AsArray(), rh, output);
-		ParseRawJSONQueries(rh, tr, stat_requests_it->second.AsArray(), output);
+		// Есть секция настроек сериализации. Формат данных - словарь
+		const std::string serialization_filename = ReadSerializationSettings(serialization_settings_it->second.AsDict());
+		// Сериализация данных и настроек каталога, рендерера, роутера
+		serialization::Serializer serializer(tc, mr, &tr);
+		serializer.Serialize(serialization_filename);
+	}
+}
+
+void ProcessRequestJSON(transport_catalogue::TransportCatalogue& tc,
+				 map_renderer::MapRenderer& mr,
+				 std::istream& input, std::ostream& output)
+{
+	using namespace std::literals;
+
+	const json::Document j_doc = json::Load(input);
+	// Корневой узел JSON документа - словарь
+	const json::Dict j_dict = j_doc.GetRoot().AsDict();
+
+	// Создаем обработчик запросов для справочника
+	transport_catalogue::RequestHandler rh(tc, mr);
+
+	// Нельзя создать объект роутера, т.к. справочник пока еще пуст.
+	// Создание роутера и обработка запросов будут производиться
+	// внутри ветки десериализации
+
+	// Проверка секции настроек сериализации.
+	const auto serialization_settings_it = j_dict.find("serialization_settings"s);
+	if (serialization_settings_it != j_dict.cend())
+	{
+		// Есть секция настроек сериализации. Формат данных - словарь
+		const std::string serialization_filename = ReadSerializationSettings(serialization_settings_it->second.AsDict());
+		
+		// Десериализация.
+		// Т.к. роутер должен получить готовый справочник, пока передаем nullptr
+		serialization::Serializer serializer(tc, mr, nullptr);
+		serializer.Deserialize(serialization_filename);
+
+		// Создаем объект роутера на основе уже десериализованного каталога.
+		router::TransportRouter tr(tc);
+
+		// Передаем указатель на роутер и завершаем десериализацию
+		serializer.DeserealizeRouter(&tr);
+
+		// Находим точку начала секции запросов в словаре (если есть)
+		const auto stat_requests_it = j_dict.find("stat_requests"s);
+		if (stat_requests_it != j_dict.cend())
+		{
+			// Есть запросы к справочнику. Формат данных - массив (вектор)
+			ParseRawJSONQueries(rh, tr, stat_requests_it->second.AsArray(), output);
+		}
 	}
 }
 
@@ -237,7 +284,7 @@ void ReadRendererSettings(map_renderer::MapRenderer& mr, const json::Dict& j_dic
 	}
 
 	// Применяем новые настройки рендера
-	mr.ApplyRenderSettings(new_settings);
+	mr.ApplyRendererSettings(new_settings);
 }
 
 void ReadRouterSettings(router::TransportRouter& tr, const json::Dict& j_dict)
@@ -250,6 +297,12 @@ void ReadRouterSettings(router::TransportRouter& tr, const json::Dict& j_dict)
 	// Применяем новые настройки роутера
 	tr.ApplyRouterSettings(new_settings);
 }
+
+const std::string ReadSerializationSettings(const json::Dict& j_dict)
+{
+	return j_dict.at("file").AsString();
+}
+
 
 //--------------Processing requests-------------------
 

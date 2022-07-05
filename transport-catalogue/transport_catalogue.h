@@ -75,6 +75,10 @@ public:
 	const std::vector<StopPtr> GetAllStopsPtr() const;   // ROUTER. Возвращает вектор указателей на остановки
 	const std::deque<RoutePtr> GetAllRoutesPtr() const;  // ROUTER. Возвращает вектор указателей на маршруты
 
+	// SERIALIZER. Возвращает read-only словарь расстояний между всеми остановками
+	const std::unordered_map<std::pair<StopPtr, StopPtr>, size_t, PairPointersHasher>& GetAllDistances() const;
+
+
 private:
 	std::deque<Stop> all_stops_data_;                                     // Дек с информацией обо всех остановках (реальные данные, не указатели)
 	std::unordered_map<std::string_view, StopPtr> all_stops_map_;         // Словарь остановок (словарь с хэш-функцией)

@@ -117,9 +117,14 @@ void StopIcon::Draw(svg::ObjectContainer& container) const
 
 // -----------------MapRenderer-------------------------
 
-void MapRenderer::ApplyRenderSettings(RendererSettings& settings)
+void MapRenderer::ApplyRendererSettings(RendererSettings settings)
 {
 	settings_ = settings;
+}
+
+RendererSettings MapRenderer::GetRendererSettings() const
+{
+	return settings_;
 }
 
 

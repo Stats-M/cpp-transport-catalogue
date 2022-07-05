@@ -16,6 +16,7 @@
 #include "json.h"
 #include "map_renderer.h"
 #include "transport_router.h"
+#include "serialization.h"
 
 #include <iostream>                  // для std::cin (isteam) и std::cout (osteam)
 #include <sstream>                   // для ostringstream
@@ -26,14 +27,10 @@ namespace json_reader
 
 // ---------------Generic I/O-------------------------
 
-// Обрабатывает все данные формата JSON для указанного справочника, обработчика и потоков
-void ProcessJSON(transport_catalogue::TransportCatalogue&, map_renderer::MapRenderer&, 
-                 std::istream&, std::ostream&);
-// Считывает входные данные в формате JSON из потока и заполняет справочник
-//void LoadAsJSON(transport_catalogue::TransportCatalogue&, std::istream&);
-// Отправляет запросы к справочнику через RequestHandler и выводит JSON-ответ в поток
-//void QueryAsJSON(transport_catalogue::RequestHandler&, std::ostream&);
-//void QueryAsJSON(const json::Array&, transport_catalogue::RequestHandler&, std::ostream&);
+// Обрабатывает все данные формата JSON для режима заполнения базы и сериализации в файл
+void ProcessBaseJSON(transport_catalogue::TransportCatalogue&, map_renderer::MapRenderer&, std::istream&);
+// Обрабатывает все данные формата JSON для режима десериализации и выполнения запросов к базе
+void ProcessRequestJSON(transport_catalogue::TransportCatalogue&, map_renderer::MapRenderer&, std::istream&, std::ostream&);
 
 //------------Process json input data section-------------------
 
@@ -51,6 +48,7 @@ void AddRouteData(transport_catalogue::TransportCatalogue&, const json::Dict&);
 const svg::Color ConvertJSONColorToSVG(const json::Node&);
 void ReadRendererSettings(map_renderer::MapRenderer&, const json::Dict&);
 void ReadRouterSettings(router::TransportRouter&, const json::Dict&);
+const std::string ReadSerializationSettings(const json::Dict&);
 
 //--------------Requests section parsing-------------------
 

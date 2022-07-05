@@ -20,7 +20,7 @@ void TransportRouter::ApplyRouterSettings(RouterSettings& settings)
 }
 
 
-const RouterSettings& TransportRouter::GetRouterSettings() const
+RouterSettings TransportRouter::GetRouterSettings() const
 {
 	return settings_;
 }

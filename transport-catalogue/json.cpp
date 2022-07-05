@@ -436,4 +436,7 @@ void Print(const Document& doc, std::ostream& output)
     PrintNode(doc.GetRoot(), PrintContext{ output });
 }
 
+Node::Node(Value value) : variant(std::move(value))
+{}
+
 }  // namespace json

@@ -26,8 +26,7 @@ public:
     using variant::variant;  // Получаем доступ ко всем не-дефолтным конструкторам std::variant
     using Value = variant;   // объявляем синоним
 
-    Node(Value value) : variant(std::move(value))
-    {}
+    Node(Value value);
 
     bool IsInt() const
     {

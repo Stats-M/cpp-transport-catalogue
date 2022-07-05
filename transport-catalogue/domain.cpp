@@ -48,16 +48,6 @@ std::size_t  PairPointersHasher::operator()(const std::pair<StopPtr, StopPtr> pa
 	return hasher_(static_cast<const void*>(pair_of_pointers.first)) * 37
 		+ hasher_(static_cast<const void*>(pair_of_pointers.second));
 
-	/* Код хэшера для шаблонного варианта PairPointersHasher<T==Stop>
-	// Снимаем константность (нельзя приводить тип для константного указателя)
-	T* ptr1 = const_cast<T*>(pair_of_pointers.first);
-	T* ptr2 = const_cast<T*>(pair_of_pointers.second);
-	// Приведение несовместимых типов
-	std::uintptr_t np_ptr1 = reinterpret_cast<std::uintptr_t>(ptr1);
-	std::uintptr_t np_ptr2 = reinterpret_cast<std::uintptr_t>(ptr2);
-	return hasher_(np_ptr1) * 37 + hasher_(np_ptr2);
-	*/
 }
-
 
 } // namespace transport_catalogue

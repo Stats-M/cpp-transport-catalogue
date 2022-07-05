@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+// Типы данных PROTOBUF и их соответствие C++
+// https://developers.google.com/protocol-buffers/docs/proto3
+
+package proto_serialization;
+
+import "map_renderer.proto";
+import "transport_router.proto";
+
+message Coordinates
+{
+	double lat = 1;
+	double lng = 2;
+}
+
+message Stop
+{
+	bytes name = 1;
+	Coordinates coords = 2;
+}
+
+message Distance
+{
+	bytes from = 1;
+	bytes to = 2;
+	uint32 distance = 3;
+}
+
+message Route
+{
+	bytes route_name = 1;
+	repeated Stop stops = 2;
+	bool is_circular = 3;
+}
+
+// Сообщение (класс) верхнего уровня, собержит все настройки
+message TransportCatalogue
+{
+	repeated Stop stops = 1;
+	repeated Route routes = 2;
+	repeated Distance distances = 3;
+	RendererSettings renderer_settings = 4;  // тут будет включен svg.proto
+	RouterSettings router_settings = 5;
+}

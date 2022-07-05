@@ -171,7 +171,10 @@ private:
 class MapRenderer
 {
 public:
-    void ApplyRenderSettings(RendererSettings&);
+    // Метод применяет указанные настройки рендеринга карты
+    void ApplyRendererSettings(RendererSettings);
+    // SERIALIZER. Возвращает настройки рендеринга карты
+    RendererSettings GetRendererSettings() const;
 
     // Метод добавляет данные линий маршрутов в SVG-файл
     void AddRouteLinesToRender(std::vector<std::unique_ptr<svg::Drawable>>& picture_,
