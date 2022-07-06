@@ -3,7 +3,7 @@
 namespace serialization
 {
 
-// Конструктор
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 Serializer::Serializer(transport_catalogue::TransportCatalogue& tc,
 					   map_renderer::MapRenderer& mr,
 					   router::TransportRouter* tr  /*=nullptr*/)
@@ -16,24 +16,24 @@ void Serializer::Serialize(const std::string& filename)
 {
 	std::ofstream out(filename, std::ios::binary);
 	proto_all_settings_.Clear();
-	// Сохраняем настройки в proto структуру класса
+	// РЎРѕС…СЂР°РЅСЏРµРј РЅР°СЃС‚СЂРѕР№РєРё РІ proto СЃС‚СЂСѓРєС‚СѓСЂСѓ РєР»Р°СЃСЃР°
 	SerializeStop();
 	SerializeDistance();
 	SerializeRoute();
 	SerealizeRendererSettings();
 	SerealizeRouterSettings();
-	// Сериализуем прото-структуру в файл
+	// РЎРµСЂРёР°Р»РёР·СѓРµРј РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂСѓ РІ С„Р°Р№Р»
 	proto_all_settings_.SerializeToOstream(&out);
 }
 
 void Serializer::Deserialize(const std::string& filename)
 {
-	// Десериализуем настройки из файла в proto структуру класса
+	// Р”РµСЃРµСЂРёР°Р»РёР·СѓРµРј РЅР°СЃС‚СЂРѕР№РєРё РёР· С„Р°Р№Р»Р° РІ proto СЃС‚СЂСѓРєС‚СѓСЂСѓ РєР»Р°СЃСЃР°
 	std::ifstream in(filename, std::ios::binary);
 	proto_all_settings_.Clear();
 	proto_all_settings_.ParseFromIstream(&in);
 
-	// Разбираем настройки из прото-структуры класса
+	// Р Р°Р·Р±РёСЂР°РµРј РЅР°СЃС‚СЂРѕР№РєРё РёР· РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂС‹ РєР»Р°СЃСЃР°
 	DeserializeCatalogue();
 	DeserializeRenderer();
 }
@@ -45,12 +45,12 @@ void Serializer::DeserealizeRouter(router::TransportRouter* tr)
 		throw std::runtime_error("No router object set (nullptr)");
 	}
 
-	// Сохраняем указатель на существующий вовне класса объект роутера
+	// РЎРѕС…СЂР°РЅСЏРµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёР№ РІРѕРІРЅРµ РєР»Р°СЃСЃР° РѕР±СЉРµРєС‚ СЂРѕСѓС‚РµСЂР°
 	tr_ = tr;
 
-	// Настройки читаем из классовой переменной proto_all_settings_
+	// РќР°СЃС‚СЂРѕР№РєРё С‡РёС‚Р°РµРј РёР· РєР»Р°СЃСЃРѕРІРѕР№ РїРµСЂРµРјРµРЅРЅРѕР№ proto_all_settings_
 
-	// Короткая ссылка на ветвь настроек роутера внутри общей прото-структуры
+	// РљРѕСЂРѕС‚РєР°СЏ СЃСЃС‹Р»РєР° РЅР° РІРµС‚РІСЊ РЅР°СЃС‚СЂРѕРµРє СЂРѕСѓС‚РµСЂР° РІРЅСѓС‚СЂРё РѕР±С‰РµР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂС‹
 	const proto_serialization::RouterSettings proto_rt_settings = proto_all_settings_.router_settings();
 
 	router::RouterSettings r_settings;
@@ -65,19 +65,19 @@ void Serializer::SerializeStop()
 {
 	for (const auto& stop : tc_.GetAllStopsPtr())
 	{
-		// stop - элемент вектора типа 
+		// stop - СЌР»РµРјРµРЅС‚ РІРµРєС‚РѕСЂР° С‚РёРїР° 
 		// std::vector<StopPtr>
 
-		// Вспомогательные переменные
+		// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 		proto_serialization::Stop proto_stop;
 		proto_serialization::Coordinates proto_coords;
 		
-		// Заполняем временые переменные данными
+		// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё
 		proto_coords.set_lat(stop->coords.lat);
 		proto_coords.set_lng(stop->coords.lng);
 		*proto_stop.mutable_coords() = proto_coords;
 		proto_stop.set_name(stop->name);
-		// Запоминаем в классовой прото-структуре
+		// Р—Р°РїРѕРјРёРЅР°РµРј РІ РєР»Р°СЃСЃРѕРІРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ
 		*proto_all_settings_.add_stops() = proto_stop;
 	}
 }
@@ -87,17 +87,17 @@ void Serializer::SerializeDistance()
 {
 	for (const auto& distance : tc_.GetAllDistances())
 	{
-		// distance - элемент словаря типа 
+		// distance - СЌР»РµРјРµРЅС‚ СЃР»РѕРІР°СЂСЏ С‚РёРїР° 
 		// std::unordered_map<std::pair<StopPtr, StopPtr>, size_t...>
 
-		// Вспомогательные переменные
+		// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 		proto_serialization::Distance proto_distance;
 
-		// Заполняем временые переменные данными.
+		// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё.
 		proto_distance.set_from(distance.first.first->name);
 		proto_distance.set_to(distance.first.second->name);
 		proto_distance.set_distance(distance.second);
-		// Запоминаем в классовой прото-структуре
+		// Р—Р°РїРѕРјРёРЅР°РµРј РІ РєР»Р°СЃСЃРѕРІРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ
 		*proto_all_settings_.add_distances() = proto_distance;
 	}
 }
@@ -106,81 +106,81 @@ void Serializer::SerializeRoute()
 {
 	for (const auto& route : tc_.GetAllRoutesPtr())
 	{
-		// stop - элемент дека типа 
+		// stop - СЌР»РµРјРµРЅС‚ РґРµРєР° С‚РёРїР° 
 		// std::deque<RoutePtr>
 
-		// Вспомогательные переменные
+		// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 		proto_serialization::Route proto_route;
 
-		// Заполняем временые переменные данными.
+		// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё.
 		proto_route.set_route_name(route->route_name);
 		proto_route.set_is_circular(route->is_circular);
 
-		// ВНИМАНИЕ! Некольцевые маршруты в каталоге достраиваются
-		// до кольцевых. Для них сериализовать нужно только 
-		// первую половину остановок + 1
+		// Р’РќРРњРђРќРР•! РќРµРєРѕР»СЊС†РµРІС‹Рµ РјР°СЂС€СЂСѓС‚С‹ РІ РєР°С‚Р°Р»РѕРіРµ РґРѕСЃС‚СЂР°РёРІР°СЋС‚СЃСЏ
+		// РґРѕ РєРѕР»СЊС†РµРІС‹С…. Р”Р»СЏ РЅРёС… СЃРµСЂРёР°Р»РёР·РѕРІР°С‚СЊ РЅСѓР¶РЅРѕ С‚РѕР»СЊРєРѕ 
+		// РїРµСЂРІСѓСЋ РїРѕР»РѕРІРёРЅСѓ РѕСЃС‚Р°РЅРѕРІРѕРє + 1
 		size_t num_stops_to_process = (route->is_circular ? route->stops.size() : route->stops.size() / 2 + 1);
 		for (auto stop : route->stops)
 		{
-			// Проверим, достиг ли счетчик необработанных остановок нуля
+			// РџСЂРѕРІРµСЂРёРј, РґРѕСЃС‚РёРі Р»Рё СЃС‡РµС‚С‡РёРє РЅРµРѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹С… РѕСЃС‚Р°РЅРѕРІРѕРє РЅСѓР»СЏ
 			if (num_stops_to_process == 0)
 			{
-				// Достиг. Выходим из цикла
+				// Р”РѕСЃС‚РёРі. Р’С‹С…РѕРґРёРј РёР· С†РёРєР»Р°
 				break;
 			}
 			--num_stops_to_process;
 
-			// Вспомогательные переменные вложенного цикла
+			// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РІР»РѕР¶РµРЅРЅРѕРіРѕ С†РёРєР»Р°
 			proto_serialization::Stop proto_stop;
 			proto_serialization::Coordinates proto_coords;
 
-		    // Заполняем временые переменные данными.
+		    // Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё.
 			proto_coords.set_lat(stop->coords.lat);
 			proto_coords.set_lng(stop->coords.lng);
 			proto_stop.set_name(stop->name);
 			*proto_stop.mutable_coords() = proto_coords;
 
-			// Запоминаем во временной прото-структуре метода
+			// Р—Р°РїРѕРјРёРЅР°РµРј РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 			*proto_route.add_stops() = proto_stop;
 		}
 
-		// Запоминаем в классовой прото-структуре
+		// Р—Р°РїРѕРјРёРЅР°РµРј РІ РєР»Р°СЃСЃРѕРІРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ
 		*proto_all_settings_.add_routes() = proto_route;
 	}
 }
 
 proto_serialization::Color Serializer::SerializeColor(const svg::Color& color)
 {
-	// Вспомогательные переменные
+	// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 	proto_serialization::Color proto_color;
 
 	if (std::holds_alternative<svg::Rgb>(color))
 	{
-		// Вспомогательные переменные
+		// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 		proto_serialization::Rgb proto_rgb;
 		svg::Rgb rgb = std::get<svg::Rgb>(color);
-		// Заполняем временые переменные данными.
+		// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё.
 		proto_rgb.set_red(rgb.red);
 		proto_rgb.set_green(rgb.green);
 		proto_rgb.set_blue(rgb.blue);
 
-		// Запоминаем во временной прото-структуре метода
+		// Р—Р°РїРѕРјРёРЅР°РµРј РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 		proto_color.set_is_rgba(false);
 		*proto_color.mutable_rgb() = proto_rgb;
 	}
 	else if (std::holds_alternative<svg::Rgba>(color))
 	{
 
-		// Вспомогательные переменные
+		// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 		proto_serialization::Rgba proto_rgba;
 		svg::Rgba rgba = std::get<svg::Rgba>(color);
-		// Заполняем временые переменные данными.
+		// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё.
 		proto_rgba.set_red(rgba.red);
 		proto_rgba.set_green(rgba.green);
 		proto_rgba.set_blue(rgba.blue);
 		proto_rgba.set_opacity(rgba.opacity);
 
-		// Запоминаем во временной прото-структуре метода
+		// Р—Р°РїРѕРјРёРЅР°РµРј РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 		proto_color.set_is_rgba(true);
 		*proto_color.mutable_rgba() = proto_rgba;
 	}
@@ -195,12 +195,12 @@ proto_serialization::Color Serializer::SerializeColor(const svg::Color& color)
 
 void Serializer::SerealizeRendererSettings()
 {
-	// Вспомогательные переменные
+	// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 	const auto renderer_settings = mr_.GetRendererSettings();
 	proto_serialization::RendererSettings proto_renderer_settings;
 	proto_serialization::Point proto_point;
 
-	// Заполняем временые переменные данными.
+	// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё.
 	proto_renderer_settings.set_width(renderer_settings.width);
 	proto_renderer_settings.set_height(renderer_settings.height);
 	proto_renderer_settings.set_padding(renderer_settings.padding);
@@ -212,55 +212,55 @@ void Serializer::SerealizeRendererSettings()
 
 	proto_point.set_x(renderer_settings.bus_label_offset.x);
 	proto_point.set_y(renderer_settings.bus_label_offset.y);
-	// Запоминаем настройки во временной прото-структуре метода
+	// Р—Р°РїРѕРјРёРЅР°РµРј РЅР°СЃС‚СЂРѕР№РєРё РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 	*proto_renderer_settings.mutable_bus_label_offset() = proto_point;
 
 	proto_point.Clear();
 	proto_point.set_x(renderer_settings.stop_label_offset.x);
 	proto_point.set_y(renderer_settings.stop_label_offset.y);
-	// Запоминаем настройки во временной прото-структуре метода
+	// Р—Р°РїРѕРјРёРЅР°РµРј РЅР°СЃС‚СЂРѕР№РєРё РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 	*proto_renderer_settings.mutable_stop_label_offset() = proto_point;
 
-	// Запоминаем настройки во временной прото-структуре метода
+	// Р—Р°РїРѕРјРёРЅР°РµРј РЅР°СЃС‚СЂРѕР№РєРё РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 	*proto_renderer_settings.mutable_underlayer_color() = SerializeColor(renderer_settings.underlayer_color);
 
-	// Запоминаем цвета палитры во временной прото-структуре метода
+	// Р—Р°РїРѕРјРёРЅР°РµРј С†РІРµС‚Р° РїР°Р»РёС‚СЂС‹ РІРѕ РІСЂРµРјРµРЅРЅРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ РјРµС‚РѕРґР°
 	for (const auto& color : renderer_settings.color_palette)
 	{
 		*proto_renderer_settings.add_color_palette() = SerializeColor(color);
 	}
 
-	// Запоминаем настройки в классовой прото-структуре
+	// Р—Р°РїРѕРјРёРЅР°РµРј РЅР°СЃС‚СЂРѕР№РєРё РІ РєР»Р°СЃСЃРѕРІРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ
 	*proto_all_settings_.mutable_renderer_settings() = proto_renderer_settings;
 }
 
 
 void Serializer::SerealizeRouterSettings()
 {
-	// Вспомогательные переменные
+	// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 	proto_serialization::RouterSettings proto_router_settings;
-	// Читаем настройки роутера
+	// Р§РёС‚Р°РµРј РЅР°СЃС‚СЂРѕР№РєРё СЂРѕСѓС‚РµСЂР°
 	const auto rt_settings = tr_->GetRouterSettings();
 
-	// Заполняем временые переменные данными
+	// Р—Р°РїРѕР»РЅСЏРµРј РІСЂРµРјРµРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ РґР°РЅРЅС‹РјРё
 	proto_router_settings.set_bus_velocity(rt_settings.bus_velocity);
 	proto_router_settings.set_bus_wait_time(rt_settings.bus_wait_time);
 
-	// Запоминаем в классовой прото-структуре
+	// Р—Р°РїРѕРјРёРЅР°РµРј РІ РєР»Р°СЃСЃРѕРІРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂРµ
 	*proto_all_settings_.mutable_router_settings() = proto_router_settings;
 }
 
 
 void Serializer::DeserializeCatalogue()
 {
-	// 1. Восстанавливаем данные об остановках
+	// 1. Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґР°РЅРЅС‹Рµ РѕР± РѕСЃС‚Р°РЅРѕРІРєР°С…
 	for (int i = 0; i < proto_all_settings_.stops_size(); ++i)  // .stops().size()
 	{
 		proto_serialization::Stop proto_stop = proto_all_settings_.stops(i);
 		tc_.AddStop(transport_catalogue::Stop(proto_stop.name(), proto_stop.coords().lat(), proto_stop.coords().lng()));
 	}
 
-	// 2. Восстанавливаем данные о расстояниях
+	// 2. Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґР°РЅРЅС‹Рµ Рѕ СЂР°СЃСЃС‚РѕСЏРЅРёСЏС…
 	for (int i = 0; i < proto_all_settings_.distances_size(); ++i)  // .distances().size()
 	{
 		transport_catalogue::StopPtr stop_from_ptr = tc_.GetStopByName(proto_all_settings_.distances(i).from());
@@ -269,26 +269,26 @@ void Serializer::DeserializeCatalogue()
 		tc_.AddDistance(stop_from_ptr, stop_to_ptr, distance);
 	}
 
-	// 3. Восстанавливаем данные о маршрутах
+	// 3. Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РґР°РЅРЅС‹Рµ Рѕ РјР°СЂС€СЂСѓС‚Р°С…
 	for (int i = 0; i < proto_all_settings_.routes_size(); ++i)  // .routes().size()
 	{
-		// Текущий маршрут из классовой прото-структуры
+		// РўРµРєСѓС‰РёР№ РјР°СЂС€СЂСѓС‚ РёР· РєР»Р°СЃСЃРѕРІРѕР№ РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂС‹
 		proto_serialization::Route proto_route = proto_all_settings_.routes(i);
-		// Маршрут транспортного каталога
+		// РњР°СЂС€СЂСѓС‚ С‚СЂР°РЅСЃРїРѕСЂС‚РЅРѕРіРѕ РєР°С‚Р°Р»РѕРіР°
 		transport_catalogue::Route route;
 		
 		route.route_name = proto_route.route_name();
 		route.is_circular = proto_route.is_circular();
 
-		// ВНИМАНИЕ! tc_.AddRoute() достраивает не круговой маршрут до кругового.
-		// Этот момент учитывается при сериализации, сохраняя лишь 1/2 маршрута.
-		// При десериализации никаких действий не требуется, 
-		// AddRoute() все сделает автоматически
+		// Р’РќРРњРђРќРР•! tc_.AddRoute() РґРѕСЃС‚СЂР°РёРІР°РµС‚ РЅРµ РєСЂСѓРіРѕРІРѕР№ РјР°СЂС€СЂСѓС‚ РґРѕ РєСЂСѓРіРѕРІРѕРіРѕ.
+		// Р­С‚РѕС‚ РјРѕРјРµРЅС‚ СѓС‡РёС‚С‹РІР°РµС‚СЃСЏ РїСЂРё СЃРµСЂРёР°Р»РёР·Р°С†РёРё, СЃРѕС…СЂР°РЅСЏСЏ Р»РёС€СЊ 1/2 РјР°СЂС€СЂСѓС‚Р°.
+		// РџСЂРё РґРµСЃРµСЂРёР°Р»РёР·Р°С†РёРё РЅРёРєР°РєРёС… РґРµР№СЃС‚РІРёР№ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ, 
+		// AddRoute() РІСЃРµ СЃРґРµР»Р°РµС‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё
 
-		// Поостановочно переносим маршрут из proto_route в route
+		// РџРѕРѕСЃС‚Р°РЅРѕРІРѕС‡РЅРѕ РїРµСЂРµРЅРѕСЃРёРј РјР°СЂС€СЂСѓС‚ РёР· proto_route РІ route
 		for (const auto& proto_stop : proto_route.stops())
 		{
-			// Преобразуем прото-имя в указатель каталога
+			// РџСЂРµРѕР±СЂР°Р·СѓРµРј РїСЂРѕС‚Рѕ-РёРјСЏ РІ СѓРєР°Р·Р°С‚РµР»СЊ РєР°С‚Р°Р»РѕРіР°
 			route.stops.push_back(tc_.GetStopByName(proto_stop.name()));
 		}
 
@@ -298,18 +298,18 @@ void Serializer::DeserializeCatalogue()
 
 void Serializer::DeserializeRenderer()
 {
-	// Считываем настройки рендеринга
+	// РЎС‡РёС‚С‹РІР°РµРј РЅР°СЃС‚СЂРѕР№РєРё СЂРµРЅРґРµСЂРёРЅРіР°
 	mr_.ApplyRendererSettings(DeserializeRendererSettings(proto_all_settings_.renderer_settings()));
 }
 
 map_renderer::RendererSettings Serializer::DeserializeRendererSettings(const proto_serialization::RendererSettings& proto_renderer_settings)
 {
-	// Вспомогательные переменные
+	// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 	map_renderer::RendererSettings renderer_settings;
-	// Очистим массив цветов палитры от дефолтных элементов
+	// РћС‡РёСЃС‚РёРј РјР°СЃСЃРёРІ С†РІРµС‚РѕРІ РїР°Р»РёС‚СЂС‹ РѕС‚ РґРµС„РѕР»С‚РЅС‹С… СЌР»РµРјРµРЅС‚РѕРІ
 	renderer_settings.color_palette.clear();
 
-	// Считываем настройки из прото-структуры
+	// РЎС‡РёС‚С‹РІР°РµРј РЅР°СЃС‚СЂРѕР№РєРё РёР· РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂС‹
 	renderer_settings.width = proto_renderer_settings.width();
 	renderer_settings.height = proto_renderer_settings.height();
 	renderer_settings.padding = proto_renderer_settings.padding();
@@ -324,7 +324,7 @@ map_renderer::RendererSettings Serializer::DeserializeRendererSettings(const pro
 
 	renderer_settings.underlayer_color = DeserializeColor(proto_renderer_settings.underlayer_color());
 
-    // Заполняем палитру цветами из прото-структуры. Дефолтные цвета были стерты ранее
+    // Р—Р°РїРѕР»РЅСЏРµРј РїР°Р»РёС‚СЂСѓ С†РІРµС‚Р°РјРё РёР· РїСЂРѕС‚Рѕ-СЃС‚СЂСѓРєС‚СѓСЂС‹. Р”РµС„РѕР»С‚РЅС‹Рµ С†РІРµС‚Р° Р±С‹Р»Рё СЃС‚РµСЂС‚С‹ СЂР°РЅРµРµ
 	for (const auto& proto_color : proto_renderer_settings.color_palette())
 	{
 		renderer_settings.color_palette.push_back(DeserializeColor(proto_color));
@@ -337,15 +337,15 @@ svg::Color Serializer::DeserializeColor(const proto_serialization::Color& proto_
 {
 	if (!proto_color.name().empty())
 	{
-		// Цвет в формате string
+		// Р¦РІРµС‚ РІ С„РѕСЂРјР°С‚Рµ string
 		return svg::Color{ proto_color.name() };
 	}
 	else if (proto_color.is_rgba())
 	{
-		// Цвет в формате Rgba
+		// Р¦РІРµС‚ РІ С„РѕСЂРјР°С‚Рµ Rgba
 		return svg::Rgba(proto_color.rgba().red(), proto_color.rgba().green(), proto_color.rgba().blue(), proto_color.rgba().opacity());
 	}
-	// Последний вариант - цвет в формате Rgb
+	// РџРѕСЃР»РµРґРЅРёР№ РІР°СЂРёР°РЅС‚ - С†РІРµС‚ РІ С„РѕСЂРјР°С‚Рµ Rgb
 	return svg::Rgb(proto_color.rgb().red(), proto_color.rgb().green(), proto_color.rgb().blue());
 }
 
