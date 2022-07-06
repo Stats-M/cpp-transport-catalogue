@@ -3,7 +3,7 @@
  * справочника на запросы. Вся работа с данными в формате json происходит в json_reader
  * (а также main.cpp - вывод в потоки), вне json_reader'а данные обрабатываются во
  * внутренних форматах транспортного справочника. Это позволяет добавить обработку данных
- * в другом формате (напримео, XML), не меняя request_handler / transport_catalogue
+ * в другом формате (например, XML), не меняя request_handler / transport_catalogue
  *
  *   request_handler - интерфейс ("Фасад") транспортного справочника (двоичные данные)
  *       json_reader - интерфейс работы с данными формата json
@@ -14,12 +14,14 @@
 namespace json_reader
 {
 
+/*
 enum class ParseMode
 {
 	UNDEFINED,
 	MAKE_BASE,
 	PROCESS_REQUESTS,
 };
+*/
 
 // ---------------Generic I/O-------------------------
 
