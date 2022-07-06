@@ -109,7 +109,7 @@ void ProcessRequestJSON(transport_catalogue::TransportCatalogue& tc,
 		router::TransportRouter tr(tc);
 
 		// Передаем указатель на роутер и завершаем десериализацию
-		serializer.DeserealizeRouter(&tr);
+		serializer.DeserializeRouter(&tr);
 
 		// Находим точку начала секции запросов в словаре (если есть)
 		const auto stat_requests_it = j_dict.find("stat_requests"s);
