@@ -9,14 +9,14 @@ find_package(Threads REQUIRED)
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS svg.proto map_renderer.proto 
 transport_router.proto transport_catalogue.proto)
  
-# Начальный CMakeLists.txt (с .pb.cc файлами)
+# РќР°С‡Р°Р»СЊРЅС‹Р№ CMakeLists.txt (СЃ .pb.cc С„Р°Р№Р»Р°РјРё)
 # set(TC_FILES domain.cpp domain.h geo.cpp geo.h graph.h json.cpp json.h json_builder.cpp 
 # json_builder.h json_reader.cpp json_reader.h main.cpp map_renderer.cpp map_renderer.h 
 # ranges.h request_handler.cpp request_handler.h router.h serialization.cpp serialization.h 
 # svg.cpp svg.h transport_catalogue.cpp transport_catalogue.h transport_catalogue.pb.cc 
 # transport_catalogue.pb.h transport_router.cpp transport_router.h transport_catalogue.proto)
 
-# Альтернативный начальный CMakeLists.txt (с .proto файлами)
+# РђР»СЊС‚РµСЂРЅР°С‚РёРІРЅС‹Р№ РЅР°С‡Р°Р»СЊРЅС‹Р№ CMakeLists.txt (СЃ .proto С„Р°Р№Р»Р°РјРё)
 # set(TC_FILES domain.cpp domain.h geo.cpp geo.h graph.h json.cpp json.h 
 # json_builder.cpp json_builder.h json_reader.cpp json_reader.h main.cpp map_renderer.cpp 
 # map_renderer.h map_renderer.proto ranges.h request_handler.cpp request_handler.h router.h 
