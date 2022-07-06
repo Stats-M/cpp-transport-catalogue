@@ -27,7 +27,7 @@ public:
 	// Десериализует данные (точка входа десериализации), кроме роутера
 	void Deserialize(const std::string& filename);
 	// Десериализация данных роутера (последним этапом)
-	void DeserealizeRouter(router::TransportRouter* tr);
+	void DeserializeRouter(router::TransportRouter* tr);
 
 private:
 
@@ -45,9 +45,9 @@ private:
 	// Сериализация message Color
 	proto_serialization::Color SerializeColor(const svg::Color& color);
 	// Сериализация message RendererSettings
-	void SerealizeRendererSettings();
+	void SerializeRendererSettings();
 	// Сериализация message RouterSettings
-	void SerealizeRouterSettings();
+	void SerializeRouterSettings();
 
 	// Десериализация каталога
 	void DeserializeCatalogue();
