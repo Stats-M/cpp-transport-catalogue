@@ -17,45 +17,45 @@ class Serializer
 {
 public:
 
-	// Конструктор. Получает ссылки на все зависимые объекты
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ. РџРѕР»СѓС‡Р°РµС‚ СЃСЃС‹Р»РєРё РЅР° РІСЃРµ Р·Р°РІРёСЃРёРјС‹Рµ РѕР±СЉРµРєС‚С‹
 	Serializer(transport_catalogue::TransportCatalogue& tc,
 			   map_renderer::MapRenderer& mr,
 			   router::TransportRouter* tr = nullptr);
 
-	// Сериализует данные (точка входа сериализации)
+	// РЎРµСЂРёР°Р»РёР·СѓРµС‚ РґР°РЅРЅС‹Рµ (С‚РѕС‡РєР° РІС…РѕРґР° СЃРµСЂРёР°Р»РёР·Р°С†РёРё)
 	void Serialize(const std::string& filename);
-	// Десериализует данные (точка входа десериализации), кроме роутера
+	// Р”РµСЃРµСЂРёР°Р»РёР·СѓРµС‚ РґР°РЅРЅС‹Рµ (С‚РѕС‡РєР° РІС…РѕРґР° РґРµСЃРµСЂРёР°Р»РёР·Р°С†РёРё), РєСЂРѕРјРµ СЂРѕСѓС‚РµСЂР°
 	void Deserialize(const std::string& filename);
-	// Десериализация данных роутера (последним этапом)
+	// Р”РµСЃРµСЂРёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… СЂРѕСѓС‚РµСЂР° (РїРѕСЃР»РµРґРЅРёРј СЌС‚Р°РїРѕРј)
 	void DeserealizeRouter(router::TransportRouter* tr);
 
 private:
 
 	transport_catalogue::TransportCatalogue& tc_;
 	map_renderer::MapRenderer& mr_;
-	router::TransportRouter* tr_ = nullptr;           //Указатель, т.к. может не существовать
+	router::TransportRouter* tr_ = nullptr;           //РЈРєР°Р·Р°С‚РµР»СЊ, С‚.Рє. РјРѕР¶РµС‚ РЅРµ СЃСѓС‰РµСЃС‚РІРѕРІР°С‚СЊ
 	proto_serialization::TransportCatalogue proto_all_settings_;
 
-	// Сериализация message Stop
+	// РЎРµСЂРёР°Р»РёР·Р°С†РёСЏ message Stop
 	void SerializeStop();
-	// Сериализация message Distance
+	// РЎРµСЂРёР°Р»РёР·Р°С†РёСЏ message Distance
 	void SerializeDistance();
-	// Сериализация message Route (Bus)
+	// РЎРµСЂРёР°Р»РёР·Р°С†РёСЏ message Route (Bus)
 	void SerializeRoute();
-	// Сериализация message Color
+	// РЎРµСЂРёР°Р»РёР·Р°С†РёСЏ message Color
 	proto_serialization::Color SerializeColor(const svg::Color& color);
-	// Сериализация message RendererSettings
+	// РЎРµСЂРёР°Р»РёР·Р°С†РёСЏ message RendererSettings
 	void SerealizeRendererSettings();
-	// Сериализация message RouterSettings
+	// РЎРµСЂРёР°Р»РёР·Р°С†РёСЏ message RouterSettings
 	void SerealizeRouterSettings();
 
-	// Десериализация каталога
+	// Р”РµСЃРµСЂРёР°Р»РёР·Р°С†РёСЏ РєР°С‚Р°Р»РѕРіР°
 	void DeserializeCatalogue();
-	// Десериализация рендерера
+	// Р”РµСЃРµСЂРёР°Р»РёР·Р°С†РёСЏ СЂРµРЅРґРµСЂРµСЂР°
 	void DeserializeRenderer();
-	// Десериализация настроек рендеринга
+	// Р”РµСЃРµСЂРёР°Р»РёР·Р°С†РёСЏ РЅР°СЃС‚СЂРѕРµРє СЂРµРЅРґРµСЂРёРЅРіР°
 	map_renderer::RendererSettings DeserializeRendererSettings(const proto_serialization::RendererSettings& proto_renderer_settings);
-	// Десериализация цвета
+	// Р”РµСЃРµСЂРёР°Р»РёР·Р°С†РёСЏ С†РІРµС‚Р°
 	svg::Color DeserializeColor(const proto_serialization::Color& color_ser);
 };
 
