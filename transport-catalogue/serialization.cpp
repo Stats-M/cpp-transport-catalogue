@@ -20,8 +20,8 @@ void Serializer::Serialize(const std::string& filename)
 	SerializeStop();
 	SerializeDistance();
 	SerializeRoute();
-	SerealizeRendererSettings();
-	SerealizeRouterSettings();
+	SerializeRendererSettings();
+	SerializeRouterSettings();
 	// Сериализуем прото-структуру в файл
 	proto_all_settings_.SerializeToOstream(&out);
 }
@@ -38,7 +38,7 @@ void Serializer::Deserialize(const std::string& filename)
 	DeserializeRenderer();
 }
 
-void Serializer::DeserealizeRouter(router::TransportRouter* tr)
+void Serializer::DeserializeRouter(router::TransportRouter* tr)
 {
 	if (tr == nullptr)
 	{
@@ -193,7 +193,7 @@ proto_serialization::Color Serializer::SerializeColor(const svg::Color& color)
 	return proto_color;
 }
 
-void Serializer::SerealizeRendererSettings()
+void Serializer::SerializeRendererSettings()
 {
 	// Вспомогательные переменные
 	const auto renderer_settings = mr_.GetRendererSettings();
@@ -235,7 +235,7 @@ void Serializer::SerealizeRendererSettings()
 }
 
 
-void Serializer::SerealizeRouterSettings()
+void Serializer::SerializeRouterSettings()
 {
 	// Вспомогательные переменные
 	proto_serialization::RouterSettings proto_router_settings;
